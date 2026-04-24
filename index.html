@@ -640,6 +640,31 @@ header {
 
 .delete-btn:hover { background: rgba(255,68,85,0.2); }
 
+
+/* Edit modal */
+.edit-btn {
+  background: rgba(68,136,255,0.1);
+  border: 1px solid rgba(68,136,255,0.25);
+  color: #4488ff;
+  font-family: var(--sans);
+  font-size: 13px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 12px;
+  margin-right: 8px;
+  transition: all 0.2s;
+}
+
+.edit-btn:hover { background: rgba(68,136,255,0.2); }
+
+.action-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
 /* Screenshot upload */
 .screenshot-upload { display: none; }
 
@@ -1076,6 +1101,110 @@ header {
   </div>
 </div>
 
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">EDITAR TRADE</div>
+      <button class="close-btn" onclick="closeEditModal()">✕</button>
+    </div>
+
+    <input type="hidden" id="ef-id">
+    <input type="hidden" id="ef-docid">
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Fecha</label>
+        <input type="date" class="form-input" id="ef-date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Instrumento</label>
+        <select class="form-select" id="ef-instrument">
+          <option value="MNQ">MNQ — Micro NQ</option>
+          <option value="NQ">NQ — Nasdaq</option>
+          <option value="MES">MES — Micro ES</option>
+          <option value="ES">ES — S&P 500</option>
+          <option value="MYM">MYM — Micro YM</option>
+          <option value="YM">YM — Dow Jones</option>
+          <option value="OTRO">Otro</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Dirección</label>
+        <select class="form-select" id="ef-direction">
+          <option value="LONG">LONG ↑</option>
+          <option value="SHORT">SHORT ↓</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Resultado</label>
+        <div class="result-toggle">
+          <input type="radio" name="eresult" class="result-radio win-r" id="er-win" value="win" checked>
+          <label class="result-label" for="er-win">✓ WIN</label>
+          <input type="radio" name="eresult" class="result-radio loss-r" id="er-loss" value="loss">
+          <label class="result-label" for="er-loss">✕ LOSS</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Puntos</label>
+        <input type="number" class="form-input" id="ef-pts" step="0.25">
+      </div>
+      <div class="form-group">
+        <label class="form-label">P&L ($)</label>
+        <input type="number" class="form-input" id="ef-pnl">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Risk to Reward</label>
+      <div class="rr-options">
+        <input type="radio" name="err" class="rr-radio" id="err-05" value="1:0.5"><label class="rr-label" for="err-05">1:0.5</label>
+        <input type="radio" name="err" class="rr-radio" id="err-1" value="1:1"><label class="rr-label" for="err-1">1:1</label>
+        <input type="radio" name="err" class="rr-radio" id="err-15" value="1:1.5"><label class="rr-label" for="err-15">1:1.5</label>
+        <input type="radio" name="err" class="rr-radio" id="err-2" value="1:2"><label class="rr-label" for="err-2">1:2</label>
+        <input type="radio" name="err" class="rr-radio" id="err-3" value="1:3"><label class="rr-label" for="err-3">1:3</label>
+        <input type="radio" name="err" class="rr-radio" id="err-4" value="1:4"><label class="rr-label" for="err-4">1:4</label>
+        <input type="radio" name="err" class="rr-radio" id="err-5" value="1:5"><label class="rr-label" for="err-5">1:5</label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Confirmaciones del setup</label>
+      <div class="conf-grid">
+        <div><input type="checkbox" class="econf-check" id="ec1" value="Liquidity Sweep"><label class="conf-label" for="ec1"><span class="conf-dot"></span>Liquidity Sweep</label></div>
+        <div><input type="checkbox" class="econf-check" id="ec2" value="Equilibrium"><label class="conf-label" for="ec2"><span class="conf-dot"></span>Equilibrium</label></div>
+        <div><input type="checkbox" class="econf-check" id="ec3" value="5 Min FVG"><label class="conf-label" for="ec3"><span class="conf-dot"></span>5 Min FVG</label></div>
+        <div><input type="checkbox" class="econf-check" id="ec4" value="5 Min IFVG"><label class="conf-label" for="ec4"><span class="conf-dot"></span>5 Min IFVG</label></div>
+        <div><input type="checkbox" class="econf-check" id="ec5" value="1 Min IFVG"><label class="conf-label" for="ec5"><span class="conf-dot"></span>1 Min IFVG</label></div>
+        <div><input type="checkbox" class="econf-check" id="ec6" value="1 Min BO"><label class="conf-label" for="ec6"><span class="conf-dot"></span>1 Min BO</label></div>
+        <div><input type="checkbox" class="econf-check" id="ec7" value="15 Min FVG"><label class="conf-label" for="ec7"><span class="conf-dot"></span>15 Min FVG</label></div>
+        <div><input type="checkbox" class="econf-check" id="ec8" value="1 HR FVG"><label class="conf-label" for="ec8"><span class="conf-dot"></span>1 HR FVG</label></div>
+        <div><input type="checkbox" class="econf-check" id="ec9" value="4 HR FVG"><label class="conf-label" for="ec9"><span class="conf-dot"></span>4 HR FVG</label></div>
+        <div><input type="checkbox" class="econf-check" id="ec10" value="OB"><label class="conf-label" for="ec10"><span class="conf-dot"></span>OB</label></div>
+        <div><input type="checkbox" class="econf-check" id="ec11" value="5 Min BO"><label class="conf-label" for="ec11"><span class="conf-dot"></span>5 Min BO</label></div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Análisis del setup</label>
+      <textarea class="form-textarea" id="ef-analysis" placeholder="¿Por qué tomaste este trade?"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Proceso mental</label>
+      <textarea class="form-textarea" id="ef-mindset" placeholder="¿Cómo te sentiste? ¿Qué mejorar?"></textarea>
+    </div>
+
+    <button class="submit-btn" onclick="saveEditTrade()">GUARDAR CAMBIOS</button>
+  </div>
+</div>
+
 <!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -1141,6 +1270,84 @@ function showPage(name) {
   if (name === 'dashboard') renderDashboard();
 }
 
+// ===== EDIT TRADE =====
+async function openEditModal(id) {
+  const trades = await getTrades();
+  const t = trades.find(x => x.id === id);
+  if (!t) return;
+
+  document.getElementById('ef-id').value = t.id;
+  document.getElementById('ef-docid').value = t._docId || '';
+  document.getElementById('ef-date').value = t.date;
+  document.getElementById('ef-pts').value = Math.abs(t.pts);
+  document.getElementById('ef-pnl').value = Math.abs(t.pnl);
+
+  // Instrument
+  document.getElementById('ef-instrument').value = t.instrument;
+  document.getElementById('ef-direction').value = t.direction;
+
+  // Result
+  document.getElementById(t.result === 'win' ? 'er-win' : 'er-loss').checked = true;
+
+  // RR
+  const rrRadios = document.querySelectorAll('input[name="err"]');
+  rrRadios.forEach(r => { if (r.value === t.rr) r.checked = true; });
+
+  // Confirmations
+  document.querySelectorAll('.econf-check').forEach(c => {
+    c.checked = t.confirmations.includes(c.value);
+  });
+
+  // Text fields
+  document.getElementById('ef-analysis').value = t.analysis || '';
+  document.getElementById('ef-mindset').value = t.mindset || '';
+
+  document.getElementById('edit-modal').classList.add('open');
+}
+
+function closeEditModal() {
+  document.getElementById('edit-modal').classList.remove('open');
+}
+
+async function saveEditTrade() {
+  const docId = document.getElementById('ef-docid').value;
+  const id = parseInt(document.getElementById('ef-id').value);
+  const date = document.getElementById('ef-date').value;
+  const instrument = document.getElementById('ef-instrument').value;
+  const direction = document.getElementById('ef-direction').value;
+  const result = document.querySelector('input[name="eresult"]:checked').value;
+  const pts = parseFloat(document.getElementById('ef-pts').value) || 0;
+  const pnl = parseFloat(document.getElementById('ef-pnl').value) || 0;
+  const rr = document.querySelector('input[name="err"]:checked')?.value || '1:2';
+  const analysis = document.getElementById('ef-analysis').value;
+  const mindset = document.getElementById('ef-mindset').value;
+
+  const confirmations = [];
+  document.querySelectorAll('.econf-check:checked').forEach(c => confirmations.push(c.value));
+
+  const btn = document.querySelector('#edit-modal .submit-btn');
+  btn.textContent = 'Guardando...';
+  btn.disabled = true;
+
+  // Delete old + add new (Firestore doesn't support update easily without extra import)
+  if (docId) await deleteTradeFromDb(docId);
+
+  const updated = {
+    id, date, instrument, direction, result,
+    pts: result === 'loss' ? -Math.abs(pts) : pts,
+    pnl: result === 'loss' ? -Math.abs(pnl) : pnl,
+    rr, confirmations, analysis, mindset,
+    screenshot: ''
+  };
+
+  await saveTradeToDb(updated);
+
+  btn.textContent = 'GUARDAR CAMBIOS';
+  btn.disabled = false;
+  closeEditModal();
+  await renderDashboard();
+}
+
 // Make functions global so onclick handlers work
 window.saveTrade = saveTrade;
 window.showDetail = showDetail;
@@ -1151,6 +1358,9 @@ window.closeModal = closeModal;
 window.toggleWeekly = toggleWeekly;
 window.removeScreenshot = removeScreenshot;
 window.copyCaption = copyCaption;
+window.openEditModal = openEditModal;
+window.closeEditModal = closeEditModal;
+window.saveEditTrade = saveEditTrade;
 
 // Modal
 function openModal() {
@@ -1328,7 +1538,10 @@ async function showDetail(id) {
       <img class="detail-screenshot" src="${t.screenshot}" alt="Trade screenshot">
     </div>` : ''}
 
-    <button class="delete-btn" onclick="deleteTrade(${t.id})">Eliminar trade</button>
+    <div class="action-row">
+      <button class="edit-btn" onclick="openEditModal(${t.id})">✏️ Editar trade</button>
+      <button class="delete-btn" onclick="deleteTrade(${t.id})">🗑 Eliminar trade</button>
+    </div>
   `;
 
   document.getElementById('dashboard').classList.remove('active');
@@ -1552,6 +1765,10 @@ function removeScreenshot(e) {
 // Close modal on overlay click
 document.getElementById('modal').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
+});
+
+document.getElementById('edit-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeEditModal();
 });
 
 // Init
