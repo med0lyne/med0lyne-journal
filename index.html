@@ -2,8 +2,22 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>med0lyne — Trade Journal</title>
+
+<!-- PWA -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="med0lyne">
+<meta name="theme-color" content="#080808">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="description" content="Trade Journal para traders de futuros e índices">
+
+<!-- PWA Icons -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23080808'/%3E%3Ctext x='50%25' y='58%25' font-family='Arial Black,sans-serif' font-size='200' font-weight='900' fill='%2300dc82' text-anchor='middle' dominant-baseline='middle'%3Em0%3C/text%3E%3C/svg%3E">
+
+<!-- Manifest inline -->
+<link rel="manifest" href="data:application/json,%7B%22name%22%3A%22med0lyne%20Journal%22%2C%22short_name%22%3A%22med0lyne%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23080808%22%2C%22theme_color%22%3A%22%23080808%22%2C%22orientation%22%3A%22portrait%22%7D">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap');
 
@@ -35,7 +49,10 @@ body {
   color: var(--text);
   font-family: var(--sans);
   min-height: 100vh;
+  min-height: -webkit-fill-available;
   overflow-x: hidden;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* Scrollbar */
@@ -52,6 +69,8 @@ header {
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
   padding: 0 24px;
+  padding-left: max(24px, env(safe-area-inset-left));
+  padding-right: max(24px, env(safe-area-inset-right));
   height: 56px;
   display: flex;
   align-items: center;
@@ -63,7 +82,14 @@ header {
   font-size: 22px;
   letter-spacing: 2px;
   color: var(--text);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.15s;
 }
+
+.logo:hover { opacity: 0.8; }
 
 .logo span { color: var(--green); }
 
@@ -643,6 +669,75 @@ header {
 
 
 
+
+/* PWA Install Banner */
+.pwa-banner {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  left: 16px;
+  right: 16px;
+  background: var(--surface);
+  border: 1px solid rgba(0,220,130,0.25);
+  border-radius: 14px;
+  padding: 14px 16px;
+  z-index: 90;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+.pwa-banner.show { display: flex; }
+
+.pwa-icon {
+  width: 44px;
+  height: 44px;
+  background: #080808;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--display);
+  font-size: 18px;
+  color: var(--green);
+  flex-shrink: 0;
+  border: 1px solid var(--border2);
+}
+
+.pwa-text { flex: 1; }
+.pwa-text .pt { font-size: 13px; font-weight: 700; color: var(--text); }
+.pwa-text .ps { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+.pwa-install-btn {
+  background: var(--green);
+  border: none;
+  color: #000;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.pwa-close {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--text2);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 6px 10px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  min-width: 36px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* ===== INITIAL LOADER ===== */
 .init-loader {
   position: fixed;
@@ -651,7 +746,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 1001;
   flex-direction: column;
   gap: 16px;
 }
@@ -809,6 +904,22 @@ header {
 }
 
 .logout-btn:hover { color: var(--red); border-color: rgba(255,68,85,0.3); }
+
+.lang-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.lang-btn:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+
 
 /* Edit modal */
 .edit-btn {
@@ -1065,9 +1176,1323 @@ header {
 .weekly-btn:hover { background: rgba(245,197,66,0.18); }
 
 #weekly-section { margin-bottom: 28px; }
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 768px) {
+
+  /* Header */
+  header {
+    padding: 0 16px;
+    height: 52px;
+  }
+
+  .logo { font-size: 18px; }
+
+  .nav-btn { display: none; }
+  .lang-btn { display: none; }
+  .user-info { display: none !important; }
+  .user-name { display: none; }
+
+  .add-btn {
+    font-size: 12px;
+    padding: 7px 12px;
+  }
+
+  .user-name { display: none; }
+
+  /* Dashboard */
+  #dashboard { padding: 16px 14px; }
+  #detail-page { padding: 16px 14px; }
+
+  /* Stats row - 2x2 grid on mobile */
+  .stats-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .stat-card { padding: 14px 12px; }
+  .stat-card .value { font-size: 26px; }
+  .stat-card .label { font-size: 8px; }
+
+  /* Insights row - stack on mobile */
+  .insights-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .insight-card:last-child {
+    grid-column: span 2;
+  }
+
+  .insight-card { padding: 14px 12px; }
+  .insight-card .value { font-size: 22px; }
+
+  /* Section title */
+  .section-title { font-size: 14px; margin-bottom: 10px; }
+
+  /* Trade table - hide on mobile, show cards instead */
+  .trade-table-header { display: none; }
+
+  .trade-row {
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto auto;
+    gap: 6px 10px;
+    padding: 12px 14px;
+  }
+
+  .trade-row .tr-date {
+    font-size: 10px;
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .trade-row .tr-instrument {
+    font-size: 15px;
+    grid-column: 1;
+    grid-row: 1;
+    text-align: right;
+  }
+
+  .trade-row .tr-confirmations {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .conf-tag { font-size: 8px; padding: 2px 6px; }
+
+  .trade-row .tr-rr {
+    display: none;
+  }
+
+  .trade-row .tr-pts {
+    font-size: 12px;
+    grid-column: 1;
+    grid-row: 3;
+    text-align: left;
+  }
+
+  .trade-row .tr-pnl {
+    font-size: 18px;
+    font-weight: 700;
+    grid-column: 2;
+    grid-row: 1 / 3;
+    display: flex;
+    align-items: center;
+  }
+
+  .tr-badge { display: none; }
+
+  /* Modal */
+  .modal {
+    padding: 20px 16px;
+    border-radius: 20px 20px 0 0;
+    margin: auto 0 0 0;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+
+  .modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modal-title { font-size: 20px; }
+
+  .form-row { grid-template-columns: 1fr; gap: 0; }
+
+  .rr-options { gap: 6px; }
+  .rr-label { padding: 8px 12px; font-size: 12px; }
+
+  .conf-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .conf-label { font-size: 12px; padding: 8px 10px; }
+
+  .submit-btn { padding: 16px; font-size: 15px; }
+
+  /* Detail page */
+  .detail-instrument { font-size: 36px; }
+  .detail-result { font-size: 28px; }
+
+  .detail-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+
+  .detail-card { padding: 12px; }
+  .detail-card .val { font-size: 16px; }
+
+  /* Weekly modal */
+  .weekly-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Action row */
+  .action-row { flex-direction: column; }
+  .edit-btn, .delete-btn { width: 100%; text-align: center; }
+
+  /* PWA banner */
+  .pwa-banner { bottom: 12px; left: 12px; right: 12px; }
+}
+
+@media (max-width: 380px) {
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .stat-card .value { font-size: 22px; }
+  .insights-row { grid-template-columns: 1fr; }
+  .insight-card:last-child { grid-column: span 1; }
+}
+
+
+/* ===== PUBLIC PROFILE ===== */
+.profile-page {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 28px 24px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.profile-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid var(--green);
+  object-fit: cover;
+  background: var(--surface2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--display);
+  font-size: 28px;
+  color: var(--green);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.profile-avatar img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.profile-info { flex: 1; }
+
+.profile-name {
+  font-family: var(--display);
+  font-size: 32px;
+  letter-spacing: 2px;
+  color: var(--text);
+  line-height: 1;
+}
+
+.profile-handle {
+  font-size: 12px;
+  color: var(--text3);
+  letter-spacing: 2px;
+  margin-top: 4px;
+}
+
+.profile-badge {
+  background: var(--green-dim);
+  border: 1px solid rgba(0,220,130,0.25);
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  margin-top: 8px;
+  display: inline-block;
+}
+
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.profile-stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 14px;
+  text-align: center;
+}
+
+.profile-stat .ps-label {
+  font-size: 9px;
+  color: var(--text3);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.profile-stat .ps-val {
+  font-family: var(--display);
+  font-size: 24px;
+  letter-spacing: 1px;
+  color: var(--text);
+  line-height: 1;
+}
+
+.profile-stat .ps-val.green { color: var(--green); }
+.profile-stat .ps-val.red { color: var(--red); }
+
+.share-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  font-family: var(--sans);
+  font-size: 12px;
+  letter-spacing: 1px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-left: auto;
+}
+
+.share-btn:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+
+.public-toggle-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+}
+
+.toggle-label { font-size: 13px; color: var(--text2); }
+.toggle-label span { color: var(--text); font-weight: 600; }
+
+.toggle-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+}
+
+.toggle-switch input { display: none; }
+
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.1);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 18px; height: 18px;
+  left: 3px; top: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.toggle-switch input:checked + .toggle-slider { background: var(--green); }
+.toggle-switch input:checked + .toggle-slider::before { transform: translateX(20px); }
+
+.profile-not-found {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.profile-not-found .big {
+  font-family: var(--display);
+  font-size: 36px;
+  color: var(--text3);
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+}
+
+.profile-not-found p { font-size: 14px; color: var(--text3); }
+
+.powered-by {
+  text-align: center;
+  padding: 24px;
+  font-size: 11px;
+  color: var(--text3);
+  letter-spacing: 2px;
+  border-top: 1px solid var(--border);
+  margin-top: 20px;
+}
+
+.powered-by span { color: var(--green); }
+
+@media (max-width: 768px) {
+  .profile-stats { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .profile-stat .ps-val { font-size: 20px; }
+  .profile-page { padding: 16px 14px; }
+  .profile-name { font-size: 26px; }
+  .profile-avatar { width: 56px; height: 56px; font-size: 22px; }
+}
+
+/* Trader search - desktop header */
+.trader-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.trader-search-input {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 12px;
+  padding: 7px 32px 7px 12px;
+  outline: none;
+  width: 160px;
+  transition: border-color 0.2s, width 0.2s;
+}
+
+.trader-search-input::placeholder { color: var(--text3); }
+.trader-search-input:focus { border-color: rgba(0,220,130,0.4); width: 200px; }
+
+.trader-search-icon {
+  position: absolute;
+  right: 10px;
+  color: var(--text3);
+  font-size: 16px;
+  pointer-events: none;
+}
+
+/* Trader search - hamburger menu */
+.hm-search-wrap {
+  padding: 10px 12px 6px;
+  position: relative;
+}
+
+.hm-search-input {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 13px;
+  padding: 9px 12px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.hm-search-input::placeholder { color: var(--text3); }
+.hm-search-input:focus { border-color: rgba(0,220,130,0.4); }
+
+/* Autocomplete dropdown */
+.search-suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #111;
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  z-index: 600;
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.7);
+  display: none;
+}
+
+.search-suggestions.show { display: block; }
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: background 0.12s;
+  border-bottom: 1px solid var(--border);
+}
+
+.suggestion-item:last-child { border-bottom: none; }
+.suggestion-item:hover, .suggestion-item.active { background: rgba(255,255,255,0.06); }
+
+.suggestion-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.suggestion-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.suggestion-info { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+
+.suggestion-name {
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.suggestion-handle {
+  font-size: 11px;
+  color: var(--text3);
+  font-family: var(--mono);
+}
+
+.suggestion-empty {
+  padding: 14px;
+  font-size: 12px;
+  color: var(--text3);
+  text-align: center;
+}
+
+.suggestion-loading {
+  padding: 14px;
+  font-size: 12px;
+  color: var(--text3);
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .trader-search { display: none; }
+  #profile-nav-btn { display: none !important; }
+  #feed-nav-btn { display: none !important; }
+}
+
+/* Desktop search suggestions positioning */
+.trader-search .search-suggestions {
+  width: 240px;
+  left: auto;
+  right: 0;
+  top: calc(100% + 6px);
+}
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.hamburger-btn:hover {
+  background: var(--surface2);
+  border-color: rgba(255,255,255,0.2);
+}
+
+.hamburger-btn span {
+  display: block;
+  width: 16px;
+  height: 1.5px;
+  background: var(--text2);
+  border-radius: 2px;
+  transition: all 0.25s;
+  transform-origin: center;
+}
+
+.hamburger-btn.open span:nth-child(1) {
+  transform: translateY(6.5px) rotate(45deg);
+}
+.hamburger-btn.open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.hamburger-btn.open span:nth-child(3) {
+  transform: translateY(-6.5px) rotate(-45deg);
+}
+
+/* Dropdown menu */
+.hamburger-menu {
+  position: fixed;
+  top: 52px;
+  right: 0;
+  width: 240px;
+  background: rgba(15,15,15,0.98);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--border2);
+  border-top: none;
+  border-radius: 0 0 0 14px;
+  z-index: 500;
+  padding: 8px 0 12px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.7);
+  transform: translateY(-6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.hamburger-menu.open {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: all;
+}
+
+.hm-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px 14px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 6px;
+}
+
+.hm-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: none;
+}
+
+.hm-name {
+  font-size: 13px;
+  color: var(--text2);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hm-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  font-size: 13px;
+  color: var(--text2);
+  cursor: pointer;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-family: var(--sans);
+  letter-spacing: 0.5px;
+  transition: all 0.15s;
+}
+
+.hm-item:hover {
+  color: var(--text);
+  background: rgba(255,255,255,0.04);
+}
+
+.hm-item .hm-icon {
+  font-size: 14px;
+  width: 18px;
+  text-align: center;
+  opacity: 0.7;
+}
+
+.hm-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 6px 0;
+}
+
+.hm-item.danger { color: var(--red); }
+.hm-item.danger:hover { background: var(--red-dim); }
+
+@media (max-width: 768px) {
+  .hamburger-btn { display: flex; }
+  .hamburger-menu { top: 52px; }
+  #settings-desktop-btn { display: none !important; }
+}
+
+
+/* ===== EQUITY CHART ===== */
+.equity-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.equity-section .sec-label {
+  font-size: 9px; color: var(--text3); letter-spacing: 3px;
+  text-transform: uppercase; margin-bottom: 14px;
+}
+.equity-canvas-wrap { position: relative; height: 120px; }
+
+/* ===== INSTRUMENT STATS ===== */
+.inst-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.inst-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+}
+.inst-card .inst-name {
+  font-family: var(--display);
+  font-size: 20px;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.inst-card .inst-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 4px;
+  font-family: var(--mono);
+}
+.inst-card .inst-row span { color: var(--text2); }
+.inst-card .inst-wr {
+  font-size: 18px;
+  font-weight: 700;
+  font-family: var(--display);
+  margin-top: 6px;
+}
+
+/* ===== FOLLOW SYSTEM ===== */
+.follow-btn {
+  background: var(--green);
+  border: none;
+  color: #000;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+}
+.follow-btn:hover { background: #00ff97; }
+.follow-btn.following {
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--text2);
+}
+.follow-btn.following:hover { border-color: var(--red); color: var(--red); }
+
+.followers-row {
+  display: flex;
+  gap: 20px;
+  margin-top: 6px;
+}
+.followers-row .fc {
+  font-size: 12px;
+  color: var(--text3);
+  cursor: pointer;
+}
+.followers-row .fc span {
+  font-family: var(--display);
+  font-size: 16px;
+  color: var(--text);
+  margin-right: 4px;
+}
+
+/* ===== COMMENTS ===== */
+.comments-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 12px;
+}
+.comments-section .cs-title {
+  font-size: 9px; color: var(--text3);
+  letter-spacing: 3px; text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.comment-item {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.comment-item:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.comment-avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: var(--green);
+  font-family: var(--display);
+}
+.comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.comment-body { flex: 1; }
+.comment-handle { font-size: 11px; color: var(--green); font-weight: 700; margin-bottom: 3px; }
+.comment-text { font-size: 13px; color: var(--text2); line-height: 1.5; }
+.comment-time { font-size: 10px; color: var(--text3); margin-top: 3px; font-family: var(--mono); }
+.comment-input-wrap {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.comment-input {
+  flex: 1;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 13px;
+  padding: 9px 12px;
+  outline: none;
+}
+.comment-input:focus { border-color: rgba(0,220,130,0.4); }
+.comment-send {
+  background: var(--green);
+  border: none;
+  color: #000;
+  font-weight: 700;
+  padding: 9px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+/* ===== NOTIFICATIONS ===== */
+.notif-btn {
+  position: relative;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  transition: all 0.2s;
+}
+.notif-btn.show { display: flex; }
+.notif-btn:hover { background: rgba(255,255,255,0.1); }
+.notif-dot {
+  position: absolute;
+  top: 4px; right: 4px;
+  width: 8px; height: 8px;
+  background: var(--red);
+  border-radius: 50%;
+  display: none;
+}
+.notif-dot.show { display: block; }
+
+.notif-panel {
+  position: fixed;
+  top: 58px; right: 16px;
+  width: 300px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  z-index: 300;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  display: none;
+  overflow: hidden;
+}
+.notif-panel.show { display: block; }
+.notif-header {
+  padding: 14px 16px 10px;
+  font-size: 11px;
+  color: var(--text3);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.notif-clear {
+  font-size: 10px;
+  color: var(--text3);
+  cursor: pointer;
+  background: none;
+  border: none;
+  letter-spacing: 1px;
+}
+.notif-clear:hover { color: var(--text2); }
+.notif-list { max-height: 300px; overflow-y: auto; }
+.notif-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.4;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.notif-item:hover { background: rgba(255,255,255,0.03); }
+.notif-item.unread { background: rgba(0,220,130,0.04); }
+.notif-item .ni-time { font-size: 10px; color: var(--text3); margin-top: 3px; font-family: var(--mono); }
+.notif-empty { padding: 24px; text-align: center; font-size: 13px; color: var(--text3); }
+
+/* ===== MONTHLY SUMMARY ===== */
+.monthly-summary { margin-top: 20px; }
+
+/* ===== STORY GENERATOR ===== */
+.story-modal {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 360px;
+  padding: 20px;
+  margin: auto;
+  position: relative;
+}
+.story-preview {
+  width: 100%;
+  aspect-ratio: 9/16;
+  max-height: 400px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 14px;
+  position: relative;
+  background: #050505;
+}
+.story-preview canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  /* Canvas renders at 1080x1920 but displays scaled down */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+.story-dl-btn {
+  width: 100%;
+  background: var(--green);
+  border: none;
+  color: #000;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 13px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+  .inst-grid { grid-template-columns: 1fr 1fr; }
+  .notif-panel { right: 8px; left: 8px; width: auto; }
+}
+
+
+/* ===== IG TRADE GRID ===== */
+.trade-ig-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+  margin-bottom: 20px;
+}
+
+.trade-ig-cell {
+  aspect-ratio: 1;
+  position: relative;
+  overflow: hidden;
+  background: var(--surface2);
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.trade-ig-cell:hover .tig-overlay { opacity: 1; }
+
+.trade-ig-cell img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tig-no-img {
+  width: 100%; height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: var(--surface);
+}
+
+.tig-instrument {
+  font-family: var(--display);
+  font-size: 16px;
+  letter-spacing: 1px;
+  color: var(--text);
+}
+
+.tig-pnl {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.tig-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.tig-overlay .tig-wr {
+  font-family: var(--display);
+  font-size: 22px;
+  color: #fff;
+}
+
+.tig-overlay .tig-date {
+  font-size: 10px;
+  color: rgba(255,255,255,0.6);
+  font-family: var(--mono);
+}
+
+/* Public trade detail page */
+#pub-detail-page {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 28px 24px;
+}
+
+@media (max-width: 768px) {
+  #pub-detail-page { padding: 16px 14px; }
+}
+
+
+/* ===== SETTINGS MODAL ===== */
+.settings-modal {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 480px;
+  padding: 28px;
+  margin: auto;
+  position: relative;
+}
+
+.settings-section {
+  margin-bottom: 24px;
+}
+
+.settings-section-title {
+  font-size: 9px;
+  color: var(--text3);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+}
+
+.settings-row-info { flex: 1; }
+.settings-row-label { font-size: 14px; color: var(--text); font-weight: 500; }
+.settings-row-desc { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+.settings-link-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--green-dim);
+  border: 1px solid rgba(0,220,130,0.2);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-top: 10px;
+}
+
+.settings-link-url {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  font-family: var(--mono);
+  word-break: break-all;
+  flex: 1;
+}
+
+
+/* ===== GLOBAL FEED ===== */
+.feed-page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 28px 24px;
+}
+
+.feed-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.feed-title {
+  font-family: var(--display);
+  font-size: 22px;
+  letter-spacing: 2px;
+  color: var(--text);
+}
+
+.feed-live {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--green);
+  letter-spacing: 2px;
+  font-family: var(--mono);
+}
+
+.feed-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.feed-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.feed-card:hover {
+  border-color: var(--border2);
+  background: var(--surface2);
+}
+
+.feed-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.feed-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--display);
+  font-size: 14px;
+  color: var(--green);
+  flex-shrink: 0;
+}
+
+.feed-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.feed-user { flex: 1; }
+
+.feed-username {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.feed-time {
+  font-size: 11px;
+  color: var(--text3);
+  font-family: var(--mono);
+  margin-top: 1px;
+}
+
+.feed-result {
+  font-family: var(--display);
+  font-size: 22px;
+  letter-spacing: 1px;
+}
+
+.feed-result.win { color: var(--green); }
+.feed-result.loss { color: var(--red); }
+
+.feed-card-body {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.feed-screenshot {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.feed-screenshot-placeholder {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--display);
+  font-size: 14px;
+  color: var(--text3);
+  flex-shrink: 0;
+}
+
+.feed-trade-info { flex: 1; }
+
+.feed-instrument {
+  font-family: var(--display);
+  font-size: 20px;
+  letter-spacing: 1px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.feed-stats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.feed-stat {
+  font-size: 11px;
+  color: var(--text3);
+  font-family: var(--mono);
+}
+
+.feed-stat span { color: var(--text2); }
+
+.feed-confs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.feed-actions {
+  display: flex;
+  gap: 16px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  margin-top: 2px;
+}
+
+.feed-action {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--text3);
+  cursor: pointer;
+  transition: color 0.15s;
+  background: none;
+  border: none;
+  font-family: var(--sans);
+}
+
+.feed-action:hover { color: var(--text2); }
+.feed-action.liked { color: var(--green); }
+
+.feed-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text3);
+}
+
+.feed-empty .big {
+  font-family: var(--display);
+  font-size: 28px;
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+
+.feed-loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--text3);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+@media (max-width: 768px) {
+  .feed-page { padding: 16px 14px; }
+}
+
 </style>
 </head>
 <body>
+
+<!-- PWA INSTALL BANNER -->
+<div class="pwa-banner" id="pwa-banner">
+  <div class="pwa-icon">m0</div>
+  <div class="pwa-text">
+    <div class="pt" id="pwa-title">Instalar app</div>
+    <div class="ps" id="pwa-desc">Agrega med0lyne a tu pantalla de inicio</div>
+  </div>
+  <button class="pwa-install-btn" id="pwa-install-btn">Instalar</button>
+  <button class="pwa-close" onclick="closePwaBanner()">×</button>
+</div>
 
 <!-- INIT LOADER -->
 <div class="init-loader" id="init-loader">
@@ -1076,7 +2501,7 @@ header {
 </div>
 
 <!-- AUTH SCREEN -->
-<div class="auth-screen" id="auth-screen" style="display:none">
+<div class="auth-screen" id="auth-screen" style="display:flex">
   <div class="auth-card">
     <div class="auth-logo">med<span>0</span>lyne</div>
     <div class="auth-tagline">Trade Journal</div>
@@ -1096,17 +2521,88 @@ header {
 </div>
 
 <header>
-  <div class="logo">med<span>0</span>lyne<span style="color:rgba(255,255,255,0.15);font-size:14px;margin-left:8px">JOURNAL</span></div>
+  <button class="logo" onclick="showPage('dashboard'); closeHamburger()">med<span>0</span>lyne<span style="color:rgba(255,255,255,0.15);font-size:14px;margin-left:8px">JOURNAL</span></button>
   <div class="header-right">
+    <!-- Desktop: keep original items -->
     <div class="user-info" id="user-info" style="display:none">
       <img class="user-avatar" id="user-avatar" src="" alt="">
       <span class="user-name" id="user-name"></span>
       <button class="logout-btn" id="logout-btn">Salir</button>
     </div>
+    <button class="lang-btn" id="lang-btn" onclick="toggleLang()">EN</button>
     <button class="nav-btn active" onclick="showPage('dashboard')">Dashboard</button>
-    <button class="add-btn" onclick="openModal()">+ Nuevo Trade</button>
+    <button class="nav-btn" id="profile-nav-btn" onclick="showPage('profile')" style="display:none">Mi Perfil</button>
+    <button class="nav-btn" id="feed-nav-btn" onclick="showPage('feed')" style="display:none">Feed</button>
+    <!-- Search trader (desktop) -->
+    <div class="trader-search" id="trader-search-wrap">
+      <input class="trader-search-input" id="trader-search-input" type="text" placeholder="Buscar trader..." autocomplete="off"
+        oninput="searchTraderLive(this.value, 'desktop-suggestions')"
+        onkeydown="handleTraderSearch(event, 'desktop-suggestions')"
+        onblur="setTimeout(()=>hideSuggestions('desktop-suggestions'),200)">
+      <span class="trader-search-icon">⌕</span>
+      <div class="search-suggestions" id="desktop-suggestions"></div>
+    </div>
+    <!-- Add Trade button always visible -->
+    <button class="add-btn" onclick="openModal()" id="new-trade-btn">+ Nuevo Trade</button>
+    <!-- Hamburger button (mobile only) -->
+    <button class="notif-btn" id="notif-btn" onclick="toggleNotifPanel()">
+      🔔<span class="notif-dot" id="notif-dot"></span>
+    </button>
+    <button class="notif-btn" id="settings-desktop-btn" onclick="openSettings()" style="display:none">⚙️</button>
+    <button class="hamburger-btn" id="hamburger-btn" onclick="toggleHamburger()" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
+
+<!-- HAMBURGER DROPDOWN MENU -->
+<div class="hamburger-menu" id="hamburger-menu">
+  <!-- User info row (shown when logged in) -->
+  <div class="hm-user" id="hm-user-row" style="display:none">
+    <img class="hm-avatar" id="hm-avatar" src="" alt="" style="display:none">
+    <span class="hm-name" id="hm-name">—</span>
+  </div>
+
+  <!-- Search trader -->
+  <div class="hm-search-wrap">
+    <input class="hm-search-input" id="hm-search-input" type="text" placeholder="Buscar trader..." autocomplete="off"
+      oninput="searchTraderLive(this.value, 'mobile-suggestions')"
+      onkeydown="handleTraderSearch(event, 'mobile-suggestions')"
+      onblur="setTimeout(()=>hideSuggestions('mobile-suggestions'),200)">
+    <div class="search-suggestions" id="mobile-suggestions"></div>
+  </div>
+
+  <button class="hm-item" onclick="showPage('dashboard'); closeHamburger()">
+    <span class="hm-icon">◈</span> Dashboard
+  </button>
+
+  <button class="hm-item" id="hm-feed-btn" onclick="showPage('feed'); closeHamburger()" style="display:none">
+    <span class="hm-icon">🌐</span> <span id="hm-feed-label">Feed</span>
+  </button>
+  <button class="hm-item" id="hm-profile-btn" onclick="showPage('profile'); closeHamburger()" style="display:none">
+    <span class="hm-icon">👤</span> Mi Perfil
+  </button>
+
+  <button class="hm-item" id="hm-settings-btn" onclick="openSettings(); closeHamburger()" style="display:none">
+    <span class="hm-icon">⚙️</span> <span id="hm-settings-label">Ajustes</span>
+  </button>
+
+  <div class="hm-divider"></div>
+
+  <button class="hm-item" id="hm-lang-btn" onclick="toggleLang(); closeHamburger()">
+    <span class="hm-icon">🌐</span> <span id="hm-lang-label">Cambiar a EN</span>
+  </button>
+
+  <button class="hm-item" onclick="exportCSV(); closeHamburger()">
+    <span class="hm-icon">📥</span> <span id="hm-export-label">Exportar CSV</span>
+  </button>
+
+  <div class="hm-divider"></div>
+
+  <button class="hm-item danger" id="hm-logout-btn" onclick="logoutUser(); closeHamburger()" style="display:none">
+    <span class="hm-icon">→</span> Salir
+  </button>
+</div>
 
 <!-- DASHBOARD -->
 <div id="dashboard" class="page active">
@@ -1124,12 +2620,12 @@ header {
     <div class="stat-card blue">
       <div class="label">Puntos Totales</div>
       <div class="value" style="color:#4488ff" id="stat-pts">0</div>
-      <div class="sub">pts capturados</div>
+      <div class="sub" id="txt-pts-captured">pts capturados</div>
     </div>
     <div class="stat-card">
       <div class="label">RR Promedio</div>
       <div class="value" id="stat-rr">—</div>
-      <div class="sub">risk to reward</div>
+      <div class="sub" id="txt-rr-sub">risk to reward</div>
     </div>
   </div>
 
@@ -1137,37 +2633,60 @@ header {
     <div class="insight-card">
       <div class="label">Mejor Horario</div>
       <div class="value green" id="ins-hour">—</div>
-      <div class="sub" id="ins-hour-sub">sin datos</div>
+      <div class="sub" id="ins-hour-sub"></div>
     </div>
     <div class="insight-card">
       <div class="label">Racha Actual</div>
       <div class="value" id="ins-streak">—</div>
-      <div class="sub" id="ins-streak-sub">sin trades</div>
+      <div class="sub" id="ins-streak-sub"></div>
     </div>
     <div class="insight-card" style="grid-column: span 1;">
       <div class="label">Top Confirmaciones</div>
       <div class="conf-bars" id="ins-confs">
-        <div style="font-size:12px;color:var(--text3)">sin datos</div>
+        <div style="font-size:12px;color:var(--text3)" id="ins-confs-empty">sin datos</div>
       </div>
     </div>
   </div>
 
+  <!-- EQUITY CHART -->
+  <div class="equity-section" id="equity-section" style="display:none">
+    <div class="sec-label" id="equity-label">Curva de Equity</div>
+    <div class="equity-canvas-wrap">
+      <canvas id="equity-canvas"></canvas>
+    </div>
+  </div>
+
+  <!-- INSTRUMENT STATS -->
+  <div id="inst-stats-section" style="display:none">
+    <div class="section-title" id="inst-stats-title">Por Instrumento</div>
+    <div class="inst-grid" id="inst-grid"></div>
+  </div>
+
+  <!-- MONTHLY SUMMARY -->
+  <div id="monthly-section" style="margin-bottom:28px;display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div class="section-title" style="margin-bottom:0" id="monthly-title">Resumen Mensual</div>
+      <button class="weekly-btn" id="monthly-btn-el" onclick="toggleMonthly()">📅 Ver mes</button>
+    </div>
+    <div id="monthly-content" style="display:none"></div>
+  </div>
+
   <div id="weekly-section">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <div class="section-title" style="margin-bottom:0">Resumen Semanal</div>
-      <button class="weekly-btn" onclick="toggleWeekly()">📊 Ver resumen</button>
+      <div class="section-title" style="margin-bottom:0" id="txt-weekly-title2">Resumen Semanal</div>
+      <button class="weekly-btn" id="weekly-btn-el" onclick="toggleWeekly()">📊 Ver resumen</button>
     </div>
     <div id="weekly-content" style="display:none"></div>
   </div>
 
-  <div class="section-title">Historial</div>
+  <div class="section-title" id="txt-history">Historial</div>
 
   <div class="trade-table-header">
-    <span>Fecha</span>
-    <span>Instrumento</span>
-    <span>Confirmaciones</span>
+    <span id="th-date">Fecha</span>
+    <span id="th-instrument">Instrumento</span>
+    <span id="th-confirmations">Confirmaciones</span>
     <span style="text-align:center">RR</span>
-    <span style="text-align:right">Puntos</span>
+    <span style="text-align:right" id="th-points">Puntos</span>
     <span style="text-align:right">P&L</span>
     <span></span>
   </div>
@@ -1182,7 +2701,7 @@ header {
 
 <!-- DETAIL PAGE -->
 <div id="detail-page" class="page">
-  <button class="back-btn" onclick="showPage('dashboard')">← Volver</button>
+  <button class="back-btn" id="back-btn-detail" onclick="goBackDetail()">← Volver</button>
   <div id="detail-content"></div>
 </div>
 
@@ -1301,11 +2820,16 @@ header {
   </div>
 </div>
 
+<!-- PUBLIC PROFILE PAGE -->
+<div id="profile-page" class="page">
+  <div class="profile-page" id="profile-content"></div>
+</div>
+
 <!-- EDIT MODAL -->
 <div class="modal-overlay" id="edit-modal">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">EDITAR TRADE</div>
+      <div class="modal-title" id="edit-modal-title">EDITAR TRADE</div>
       <button class="close-btn" onclick="closeEditModal()">✕</button>
     </div>
 
@@ -1406,10 +2930,181 @@ header {
 </div>
 
 <!-- Firebase -->
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="settings-modal">
+    <div class="modal-header">
+      <div class="modal-title" id="settings-title">AJUSTES</div>
+      <button class="close-btn" onclick="closeSettings()">✕</button>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title" id="settings-privacy-title">Privacidad</div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-label" id="settings-public-label">Perfil público</div>
+          <div class="settings-row-desc" id="settings-public-desc">Permite que otros traders vean tus trades</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="settings-public-toggle" onchange="togglePublic(this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title" id="settings-account-title">Cuenta</div>
+
+      <div class="settings-row" style="cursor:pointer" onclick="exportCSV();closeSettings()">
+        <div class="settings-row-info">
+          <div class="settings-row-label" id="settings-export-label">Exportar trades</div>
+          <div class="settings-row-desc" id="settings-export-desc">Descarga todos tus trades en CSV</div>
+        </div>
+        <span style="color:var(--text3)">›</span>
+      </div>
+    </div>
+
+    <div class="settings-section" style="margin-bottom:0">
+      <div class="settings-section-title" id="settings-session-title">Sesión</div>
+      <div class="settings-row" style="cursor:pointer" onclick="logoutUser()">
+        <div class="settings-row-info">
+          <div class="settings-row-label" style="color:var(--red)" id="settings-logout-label">Cerrar sesión</div>
+        </div>
+        <span style="color:var(--red)">›</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GLOBAL FEED PAGE -->
+<div id="feed-page" class="page">
+  <div class="feed-page">
+    <div class="feed-header">
+      <div class="feed-title" id="feed-title-txt">FEED</div>
+      <div class="feed-live">
+        <div class="feed-live-dot"></div>
+        <span id="feed-live-txt">EN VIVO</span>
+      </div>
+    </div>
+    <div id="feed-content">
+      <div class="feed-loading" id="feed-loading-txt">Cargando...</div>
+    </div>
+  </div>
+</div>
+
+<!-- PUBLIC TRADE DETAIL PAGE -->
+<div id="pub-detail-page" class="page">
+  <button class="back-btn" id="back-btn-pub" onclick="goBackPublic()">← Volver</button>
+  <div id="pub-detail-content"></div>
+</div>
+
+<!-- NOTIFICATION PANEL -->
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-header">
+    <span id="notif-header-txt">NOTIFICACIONES</span>
+    <button class="notif-clear" id="notif-clear-btn" onclick="clearNotifications()">Limpiar</button>
+  </div>
+  <div class="notif-list" id="notif-list">
+    <div class="notif-empty">Sin notificaciones</div>
+  </div>
+</div>
+
+<!-- STORY GENERATOR MODAL -->
+<div class="modal-overlay" id="story-modal">
+  <div class="story-modal">
+    <div class="modal-header">
+      <div class="modal-title" id="story-modal-title">GENERAR STORY</div>
+      <button class="close-btn" onclick="closeStoryModal()">✕</button>
+    </div>
+    <div class="story-preview">
+      <canvas id="story-canvas" width="1080" height="1920" style="width:100%;height:100%;display:block"></canvas>
+    </div>
+    <button class="story-dl-btn" id="story-dl-btn" onclick="downloadStory()">↓ Descargar Story</button>
+  </div>
+</div>
+
+<!-- EDIT PROFILE MODAL -->
+<div class="modal-overlay" id="edit-profile-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="ep-modal-title">EDITAR PERFIL</div>
+      <button class="close-btn" onclick="closeEditProfile()">✕</button>
+    </div>
+
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:20px">
+      <div id="ep-pic-preview" onclick="document.getElementById('ep-pic-input').click()" style="width:80px;height:80px;border-radius:50%;background:var(--surface2);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:28px;color:var(--green);overflow:hidden;cursor:pointer;position:relative">
+        <span id="ep-pic-initials">?</span>
+        <div style="position:absolute;inset:0;background:rgba(0,0,0,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0;transition:0.2s" class="pic-overlay">📷</div>
+      </div>
+      <input type="file" id="ep-pic-input" accept="image/*" style="display:none">
+      <div style="font-size:11px;color:var(--text3);letter-spacing:1px" id="ep-pic-hint">Toca para cambiar foto</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" id="ep-name-label">Nombre</label>
+      <input type="text" class="form-input" id="ep-name" placeholder="Tu nombre">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" id="ep-username-label">Usuario (@)</label>
+      <input type="text" class="form-input" id="ep-username" placeholder="tunombre" style="text-transform:lowercase">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" id="ep-bio-label">Bio</label>
+      <textarea class="form-textarea" id="ep-bio" placeholder="Cuéntale a la gente sobre tu trading..." style="min-height:60px"></textarea>
+    </div>
+
+    <button class="submit-btn" id="ep-save-btn" onclick="saveEditProfile()">GUARDAR CAMBIOS</button>
+  </div>
+</div>
+
+<script>
+// Global vars and proxy functions for module scope
+var detailOrigin = 'dashboard';
+var _moduleReady = false;
+var _moduleQueue = [];
+
+function _callModule(fn, args) {
+  if (window['__mod_' + fn]) {
+    window['__mod_' + fn].apply(null, args);
+  }
+}
+
+function goBackDetail() { _callModule('showPage', [detailOrigin]); }
+function goBackPublic() { _callModule('goBackToPublicProfile', []); }
+function toggleNotifPanel() {
+  var panel = document.getElementById('notif-panel');
+  if (!panel) return;
+  var isOpen = panel.classList.contains('show');
+  if (isOpen) {
+    panel.classList.remove('show');
+  } else {
+    panel.classList.add('show');
+    if (window.__mod_loadNotifications) {
+      window.__mod_loadNotifications().then(function() {
+        if (window.__mod_markNotificationsRead) window.__mod_markNotificationsRead();
+      });
+    }
+  }
+}
+function clearNotifications() { _callModule('clearNotifications', []); }
+function openSettings() { _callModule('openSettings', []); }
+function closeSettings() { _callModule('closeSettings', []); }
+function openModal() { _callModule('openModal', []); }
+function showPage(p) { _callModule('showPage', [p]); }
+function showDetail(id, origin) { _callModule('showDetail', [id, origin]); }
+function showPublicTrade(trade, username) { _callModule('showPublicTrade', [trade, username]); }
+function renderFeed() { if(window.__mod_renderFeed) window.__mod_renderFeed(); }
+function likeFeedTrade(id, btn) { if(window.likeFeedTrade) window.likeFeedTrade(id, btn); }
+function openFeedTrade(id, user) { if(window.openFeedTrade) window.openFeedTrade(id, user); }
+function handleNotifClick(type, tradeDocId, username) { if(window.__mod_handleNotifClick) window.__mod_handleNotifClick(type, tradeDocId, username); }
+</script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, where, setDoc, getDoc, updateDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD034iJj8XEhjfvrVKh9E1ySbfzYcjYe1c",
@@ -1429,9 +3124,6 @@ const COLLECTION = "trades";
 let currentUser = null;
 
 // Auth state listener
-// Handle redirect result (for mobile)
-getRedirectResult(auth).catch(e => console.error('Redirect error:', e));
-
 onAuthStateChanged(auth, (user) => {
   // Always hide loader first
   document.getElementById('init-loader').style.display = 'none';
@@ -1440,31 +3132,51 @@ onAuthStateChanged(auth, (user) => {
     currentUser = user;
     document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('user-info').style.display = 'flex';
-    document.getElementById('user-avatar').src = user.photoURL || '';
-    document.getElementById('user-name').textContent = user.displayName || user.email;
-    renderDashboard();
+    // Try to load Firestore profile for latest photo/name
+    getDoc(doc(db, 'users', user.uid)).then(snap => {
+      if (snap.exists()) {
+        const p = snap.data();
+        if (p.photoURL) document.getElementById('user-avatar').src = p.photoURL;
+        if (p.displayName) document.getElementById('user-name').textContent = p.displayName;
+      } else {
+        document.getElementById('user-avatar').src = user.photoURL || '';
+        document.getElementById('user-name').textContent = user.displayName || user.email;
+      }
+    }).catch(() => {
+      document.getElementById('user-avatar').src = user.photoURL || '';
+      document.getElementById('user-name').textContent = user.displayName || user.email;
+    });
+    const profileNavBtn = document.getElementById('profile-nav-btn');
+    if (profileNavBtn) profileNavBtn.style.display = 'inline-flex';
+    const feedNavBtn = document.getElementById('feed-nav-btn');
+    if (feedNavBtn) feedNavBtn.style.display = 'inline-flex';
+    const hmFeedBtn = document.getElementById('hm-feed-btn');
+    if (hmFeedBtn) hmFeedBtn.style.display = 'flex';
+    syncHamburgerUser(user);
+    if (!restorePageFromURL()) renderDashboard();
+    loadNotifications();
   } else {
     currentUser = null;
     document.getElementById('auth-screen').style.display = 'flex';
     document.getElementById('user-info').style.display = 'none';
-    document.getElementById('trade-list').innerHTML = '<div class="empty-state"><div class="big">SIN TRADES</div><p>Agrega tu primer trade con el botón de arriba.</p></div>';
+    syncHamburgerUser(null);
+    const pnb = document.getElementById('profile-nav-btn');
+    if (pnb) pnb.style.display = 'none';
+    document.getElementById('trade-list').innerHTML = `<div class="empty-state"><div class="big">${t('emptyTitle')}</div><p>${t('emptyDesc')}</p></div>`;
   }
 });
 
-function isMobile() {
-  return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-}
-
 async function loginWithGoogle() {
   try {
-    if (isMobile()) {
-      await signInWithRedirect(auth, provider);
-    } else {
-      await signInWithPopup(auth, provider);
-    }
+    provider.setCustomParameters({ prompt: 'select_account' });
+    await signInWithPopup(auth, provider);
   } catch(e) {
-    console.error(e);
-    alert('Error al iniciar sesión. Intenta de nuevo.');
+    console.error('Login error:', e.code, e.message);
+    if (e.code === 'auth/popup-blocked' || e.code === 'auth/cancelled-popup-request') {
+      alert('Tu navegador bloqueó el popup. Por favor permite popups para este sitio e intenta de nuevo.');
+    } else if (e.code !== 'auth/popup-closed-by-user') {
+      alert('Error al iniciar sesión: ' + e.message);
+    }
   }
 }
 
@@ -1522,8 +3234,22 @@ async function deleteTradeFromDb(docId) {
 // Pages
 function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(name === 'dashboard' ? 'dashboard' : 'detail-page').classList.add('active');
-  if (name === 'dashboard') renderDashboard();
+  if (name === 'dashboard') {
+    document.getElementById('dashboard').classList.add('active');
+    history.replaceState(null, '', window.location.pathname);
+    renderDashboard();
+  } else if (name === 'profile') {
+    document.getElementById('profile-page').classList.add('active');
+    history.replaceState(null, '', window.location.pathname + '?page=profile');
+    renderMyProfile();
+  } else if (name === 'feed') {
+    document.getElementById('feed-page').classList.add('active');
+    history.replaceState(null, '', window.location.pathname + '?page=feed');
+    renderFeed();
+  } else {
+    document.getElementById('detail-page').classList.add('active');
+  }
+  window.scrollTo(0, 0);
 }
 
 // ===== EDIT TRADE =====
@@ -1604,17 +3330,304 @@ async function saveEditTrade() {
   await renderDashboard();
 }
 
+// ===== PUBLIC PROFILE =====
+async function saveUserProfile(isPublic) {
+  if (!currentUser) return;
+  const username = currentUser.displayName?.toLowerCase().replace(/\s+/g, '') || currentUser.uid.slice(0,8);
+  await setDoc(doc(db, 'users', currentUser.uid), {
+    uid: currentUser.uid,
+    username,
+    displayName: currentUser.displayName || 'Trader',
+    photoURL: currentUser.photoURL || '',
+    isPublic,
+    updatedAt: Date.now()
+  });
+  return username;
+}
+
+async function getUserProfile(uid) {
+  try {
+    const snap = await getDoc(doc(db, 'users', uid));
+    return snap.exists() ? snap.data() : null;
+  } catch(e) { return null; }
+}
+
+async function getPublicTrades(uid) {
+  try {
+    const q = query(collection(db, COLLECTION), where('uid', '==', uid), orderBy('createdAt', 'desc'));
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({ ...d.data(), _docId: d.id }));
+  } catch(e) { return []; }
+}
+
+async function renderMyProfile() {
+  const el = document.getElementById('profile-content');
+  el.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text3)">${t('loading')}</div>`;
+
+  if (!currentUser) return;
+
+  let profile = await getUserProfile(currentUser.uid);
+  const isPublic = profile?.isPublic ?? false;
+  const username = profile?.username || currentUser.displayName?.toLowerCase().replace(/\s+/g, '') || currentUser.uid.slice(0,8);
+  const trades = await getTrades();
+
+  const totalPnl = trades.reduce((s, t2) => s + t2.pnl, 0);
+  const wins = trades.filter(t2 => t2.result === 'win').length;
+  const wr = trades.length ? Math.round((wins / trades.length) * 100) : 0;
+  const totalPts = trades.reduce((s, t2) => s + t2.pts, 0);
+  const profileUrl = `${window.location.origin}${window.location.pathname}?u=${username}`;
+
+  // Use Firestore profile data (not Google auth) for photo and name
+  const displayPhoto = profile?.photoURL || currentUser.photoURL || '';
+  const displayName = profile?.displayName || currentUser.displayName || username;
+
+  // Get followers and following counts
+  const [followersSnap, followingSnap] = await Promise.all([
+    getDocs(query(collection(db, 'follows'), where('toUid', '==', currentUser.uid))),
+    getDocs(query(collection(db, 'follows'), where('fromUid', '==', currentUser.uid)))
+  ]).catch(() => [{ size: 0 }, { size: 0 }]);
+  const followersCount = followersSnap?.size || 0;
+  const followingCount = followingSnap?.size || 0;
+
+  el.innerHTML = `
+    <div class="profile-header">
+      <div class="profile-avatar">
+        ${displayPhoto ? `<img src="${displayPhoto}" alt="">` : username.slice(0,2).toUpperCase()}
+      </div>
+      <div class="profile-info">
+        <div class="profile-name">${displayName}</div>
+        <div class="profile-handle">@${username} ${!isPublic ? '<span style="font-size:14px;opacity:0.5" title="Perfil privado">🔒</span>' : ''}</div>
+        <div class="profile-badge">${t('futuresTrader')}</div>
+        ${profile?.bio ? `<div style="font-size:13px;color:var(--text2);margin-top:8px;line-height:1.5">${profile.bio}</div>` : ''}
+        <div class="followers-row" style="margin-top:10px">
+          <span class="fc"><span>${followersCount}</span> ${t('followers')}</span>
+          <span class="fc"><span>${followingCount}</span> ${t('following')}</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+        ${isPublic ? `<button class="share-btn" onclick="copyAndShare('${profileUrl}')">🔗 Compartir</button>` : ''}
+        <button class="share-btn" onclick="openEditProfile()">✏️ ${t('editProfileBtn') || 'Editar'}</button>
+
+      </div>
+    </div>
+
+    <div class="public-toggle-wrap">
+      <div class="toggle-label">${t('publicProfile')} <span>${isPublic ? t('enabled') : t('disabled')}</span></div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="public-toggle" ${isPublic ? 'checked' : ''} onchange="togglePublic(this.checked)">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+
+
+    <div class="profile-stats">
+      <div class="profile-stat">
+        <div class="ps-label">${t('pnlTotal')}</div>
+        <div class="ps-val ${totalPnl >= 0 ? 'green' : 'red'}">${totalPnl >= 0 ? '+$' : '-$'}${Math.abs(totalPnl).toLocaleString()}</div>
+      </div>
+      <div class="profile-stat">
+        <div class="ps-label">${t('winRate')}</div>
+        <div class="ps-val">${wr}%</div>
+      </div>
+      <div class="profile-stat">
+        <div class="ps-label">${t('trades')}</div>
+        <div class="ps-val">${trades.length}</div>
+      </div>
+      <div class="profile-stat">
+        <div class="ps-label">${t('totalPts')}</div>
+        <div class="ps-val ${totalPts >= 0 ? 'green' : 'red'}">${totalPts >= 0 ? '+' : ''}${totalPts.toFixed(1)}</div>
+      </div>
+    </div>
+
+    <div class="section-title">${t('history')}</div>
+    ${trades.length === 0
+      ? `<div class="empty-state"><div class="big">${t('emptyTitle')}</div></div>`
+      : `<div class="trade-ig-grid">
+          ${trades.map(t2 => `
+            <div class="trade-ig-cell" onclick="showDetail(${t2.id}, 'profile')">
+              ${t2.screenshot
+                ? `<img src="${t2.screenshot}" alt="">`
+                : `<div class="tig-no-img">
+                    <div class="tig-instrument">${t2.instrument}</div>
+                    <div class="tig-pnl" style="color:${t2.result==='win'?'var(--green)':'var(--red)'}">${t2.pnl>=0?'+$':'-$'}${Math.abs(t2.pnl).toLocaleString()}</div>
+                  </div>`}
+              <div class="tig-overlay">
+                <div class="tig-wr" style="color:${t2.result==='win'?'var(--green)':'var(--red)'}">${t2.result==='win'?'✓ WIN':'✕ LOSS'}</div>
+                <div class="tig-date">${formatDate(t2.date)}</div>
+              </div>
+            </div>`).join('')}
+        </div>`}
+
+    <div class="powered-by">${t('poweredBy')} <span>med0lyne</span> Journal</div>
+  `;
+}
+
+async function togglePublic(isPublic) {
+  await saveUserProfile(isPublic);
+
+  renderMyProfile();
+}
+
+async function shareProfile(url) {
+  if (navigator.share) {
+    await navigator.share({ title: 'Mi Trade Journal', url });
+  } else {
+    copyLink(url);
+  }
+}
+
+function copyLink(url) {
+  navigator.clipboard.writeText(url).then(() => {
+    alert('Link copiado ✓');
+  });
+}
+
+// Restore last page from URL
+function restorePageFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('page') === 'profile' && currentUser) {
+    showPage('profile');
+    return true;
+  }
+  if (params.get('page') === 'feed' && currentUser) {
+    showPage('feed');
+    return true;
+  }
+  return false;
+}
+
+// Check if visiting a public profile
+async function checkPublicProfile() {
+  const params = new URLSearchParams(window.location.search);
+  const username = params.get('u');
+  if (!username) return false;
+
+  // Show public profile view
+  document.getElementById('init-loader').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'none';
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('profile-page').classList.add('active');
+
+  const el = document.getElementById('profile-content');
+  el.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text3)">${t('loadingProfile')}</div>`;
+
+  // Find user by username
+  try {
+    const q = query(collection(db, 'users'), where('username', '==', username.toLowerCase()));
+    const snap = await getDocs(q);
+
+    if (snap.empty || !snap.docs[0].data().isPublic) {
+      el.innerHTML = `<div class="profile-not-found"><div class="big">${t('profileNotFound')}</div><p>${t('profilePrivate')}</p></div>`;
+      return true;
+    }
+
+    const profile = snap.docs[0].data();
+    const trades = await getPublicTrades(profile.uid);
+    const totalPnl = trades.reduce((s, tr) => s + tr.pnl, 0);
+    const wins = trades.filter(tr => tr.result === 'win').length;
+    const wr = trades.length ? Math.round((wins / trades.length) * 100) : 0;
+    const totalPts = trades.reduce((s, tr) => s + tr.pts, 0);
+
+    // Check if current user follows this profile
+    const isFollowing = currentUser ? await checkFollowing(profile.uid) : false;
+    const followerCount = await getFollowerCount(profile.uid);
+
+    el.innerHTML = `
+      <div class="profile-header">
+        <div class="profile-avatar">
+          ${profile.photoURL ? `<img src="${profile.photoURL}" alt="">` : profile.username.slice(0,2).toUpperCase()}
+        </div>
+        <div class="profile-info">
+          <div class="profile-name">${profile.displayName}</div>
+          <div class="profile-handle">@${profile.username}</div>
+          <div class="profile-badge">${t('futuresTrader')}</div>
+          ${profile.bio ? `<div style="font-size:13px;color:var(--text2);margin-top:6px;line-height:1.5">${profile.bio}</div>` : ''}
+          <div class="followers-row">
+            <span class="fc"><span>${followerCount}</span> seguidores</span>
+          </div>
+        </div>
+        ${currentUser && currentUser.uid !== profile.uid ? `
+        <button class="follow-btn ${isFollowing ? 'following' : ''}" id="follow-btn-pub" onclick="toggleFollow('${profile.uid}')">
+          ${isFollowing ? 'Siguiendo' : 'Seguir'}
+        </button>` : ''}
+      </div>
+
+      <div class="profile-stats">
+        <div class="profile-stat">
+          <div class="ps-label">P&L Total</div>
+          <div class="ps-val ${totalPnl >= 0 ? 'green' : 'red'}">${totalPnl >= 0 ? '+$' : '-$'}${Math.abs(totalPnl).toLocaleString()}</div>
+        </div>
+        <div class="profile-stat">
+          <div class="ps-label">Win Rate</div>
+          <div class="ps-val">${wr}%</div>
+        </div>
+        <div class="profile-stat">
+          <div class="ps-label">Trades</div>
+          <div class="ps-val">${trades.length}</div>
+        </div>
+        <div class="profile-stat">
+          <div class="ps-label">Puntos</div>
+          <div class="ps-val ${totalPts >= 0 ? 'green' : 'red'}">${totalPts >= 0 ? '+' : ''}${totalPts.toFixed(1)}</div>
+        </div>
+      </div>
+
+      <div class="section-title">Trades</div>
+      ${trades.length === 0 ? '<div class="empty-state"><div class="big">SIN TRADES</div></div>' : `
+      <div class="trade-ig-grid">
+        ${trades.map(tr => `
+          <div class="trade-ig-cell" onclick="showPublicTrade(${JSON.stringify(tr).replace(/`/g,'\`').replace(/"/g,'&quot;')}, '${profile.username}')">
+            ${tr.screenshot
+              ? `<img src="${tr.screenshot}" alt="">`
+              : `<div class="tig-no-img">
+                  <div class="tig-instrument">${tr.instrument}</div>
+                  <div class="tig-pnl" style="color:${tr.result==='win'?'var(--green)':'var(--red)'}">${tr.pnl>=0?'+$':'-$'}${Math.abs(tr.pnl).toLocaleString()}</div>
+                </div>`}
+            <div class="tig-overlay">
+              <div class="tig-wr" style="color:${tr.result==='win'?'var(--green)':'var(--red)'}">${tr.result==='win'?'✓ WIN':'✕ LOSS'}</div>
+              <div class="tig-date">${formatDate(tr.date)}</div>
+            </div>
+          </div>`).join('')}
+      </div>`}
+
+      <div class="powered-by">${t('poweredBy')} <span>med0lyne</span> Journal</div>
+    `;
+
+    // Load comments for all trades
+    trades.forEach(t => {
+      setTimeout(() => {
+        const listEl = document.getElementById('pub-comments-list-' + t.id);
+        if (listEl) loadCommentsInto(t.id, 'pub-comments-list-' + t.id);
+      }, 300);
+    });
+
+  } catch(e) {
+    console.error(e);
+    el.innerHTML = `<div class="profile-not-found"><div class="big">ERROR</div><p>${t('profileError')}</p></div>`;
+  }
+  return true;
+}
+
 // Make functions global so onclick handlers work
 window.saveTrade = saveTrade;
 window.loginWithGoogle = loginWithGoogle;
 window.logoutUser = logoutUser;
+window.toggleLang = toggleLang;
+window.closePwaBanner = closePwaBanner;
+window.togglePublic = togglePublic;
+window.shareProfile = shareProfile;
+window.copyLink = copyLink;
 window.showDetail = showDetail;
+window.__mod_showDetail = showDetail;
 window.deleteTrade = deleteTrade;
 window.showPage = showPage;
+window.__mod_showPage = showPage;
 window.openModal = openModal;
+window.__mod_openModal = openModal;
 window.closeModal = closeModal;
 window.toggleWeekly = toggleWeekly;
 window.removeScreenshot = removeScreenshot;
+window.closePwaBanner = closePwaBanner;
 window.copyCaption = copyCaption;
 window.openEditModal = openEditModal;
 window.closeEditModal = closeEditModal;
@@ -1702,8 +3715,8 @@ async function renderDashboard() {
   const losses = trades.filter(t => t.result === 'loss').length;
   const wr = trades.length ? Math.round((wins / trades.length) * 100) : 0;
   const totalPts = trades.reduce((s, t) => s + t.pts, 0);
-  const rrVals = trades.map(t => {
-    const parts = t.rr.split(':');
+  const rrVals = trades.filter(tr => tr.rr).map(tr => {
+    const parts = tr.rr.split(':');
     return parseFloat(parts[1]) || 0;
   });
   const avgRr = rrVals.length ? (rrVals.reduce((a,b) => a+b,0) / rrVals.length).toFixed(1) : '—';
@@ -1716,99 +3729,117 @@ async function renderDashboard() {
   document.getElementById('stat-pts').textContent = (totalPts >= 0 ? '+' : '') + totalPts.toFixed(2);
   document.getElementById('stat-rr').textContent = avgRr === '—' ? '—' : '1:' + avgRr;
   renderInsights(trades);
+  renderEquityChart(trades);
+  renderInstrumentStats(trades);
+  // Show monthly section
+  if (trades.length) document.getElementById('monthly-section').style.display = 'block';
 
   if (!trades.length) {
-    list.innerHTML = '<div class="empty-state"><div class="big">SIN TRADES</div><p>Agrega tu primer trade con el botón de arriba.</p></div>';
+    list.innerHTML = `<div class="empty-state"><div class="big">${t('emptyTitle')}</div><p>${t('emptyDesc')}</p></div>`;
     return;
   }
 
-  list.innerHTML = trades.map(t => `
-    <div class="trade-row" onclick="showDetail(${t.id})">
-      <div class="tr-date">${formatDate(t.date)}</div>
-      <div class="tr-instrument">${t.instrument} <span style="color:var(--text3);font-size:11px">${t.direction}</span></div>
+  list.innerHTML = trades.map(tr => `
+    <div class="trade-row" onclick="showDetail(${tr.id})">
+      <div class="tr-date">${formatDate(tr.date)}</div>
+      <div class="tr-instrument">${tr.instrument} <span style="color:var(--text3);font-size:11px">${tr.direction}</span></div>
       <div class="tr-confirmations">
-        ${t.confirmations.slice(0,3).map(c => `<span class="conf-tag">${c}</span>`).join('')}
-        ${t.confirmations.length > 3 ? `<span class="conf-tag">+${t.confirmations.length-3}</span>` : ''}
+        ${(tr.confirmations||[]).slice(0,3).map(c => `<span class="conf-tag">${c}</span>`).join('')}
+        ${(tr.confirmations||[]).length > 3 ? `<span class="conf-tag">+${tr.confirmations.length-3}</span>` : ''}
       </div>
-      <div class="tr-rr">${t.rr}</div>
-      <div class="tr-pts" style="color:${t.pts >= 0 ? 'var(--green)' : 'var(--red)'}">${t.pts >= 0 ? '+' : ''}${t.pts}</div>
-      <div class="tr-pnl ${t.result}">${t.pnl >= 0 ? '+$' : '-$'}${Math.abs(t.pnl).toLocaleString()}</div>
-      <div class="tr-badge ${t.result}">${t.result === 'win' ? '✓' : '✕'}</div>
+      <div class="tr-rr">${tr.rr}</div>
+      <div class="tr-pts" style="color:${tr.pts >= 0 ? 'var(--green)' : 'var(--red)'}">${tr.pts >= 0 ? '+' : ''}${tr.pts}</div>
+      <div class="tr-pnl ${tr.result}">${tr.pnl >= 0 ? '+$' : '-$'}${Math.abs(tr.pnl).toLocaleString()}</div>
+      <div class="tr-badge ${tr.result}">${tr.result === 'win' ? '✓' : '✕'}</div>
     </div>
   `).join('');
 }
 
-async function showDetail(id) {
+async function showDetail(id, origin) {
+  detailOrigin = origin || 'dashboard';
+  window.detailOrigin = detailOrigin;
   const trades = await getTrades();
-  const t = trades.find(x => x.id === id);
-  if (!t) return;
+  const trade = trades.find(x => x.id === id);
+  if (!trade) return;
 
   document.getElementById('detail-content').innerHTML = `
     <div class="detail-header">
       <div>
-        <div class="detail-instrument">${t.instrument} <span style="font-size:24px;color:var(--text3)">${t.direction}</span></div>
-        <div class="detail-date">${formatDateFull(t.date)}</div>
+        <div class="detail-instrument">${trade.instrument} <span style="font-size:24px;color:var(--text3)">${trade.direction}</span></div>
+        <div class="detail-date">${formatDateFull(trade.date)}</div>
       </div>
       <div>
-        <div class="detail-result ${t.result}">${t.result === 'win' ? '+$' + Math.abs(t.pnl).toLocaleString() : '-$' + Math.abs(t.pnl).toLocaleString()}</div>
-        <div style="text-align:right;font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:4px">${t.pts >= 0 ? '+' : ''}${t.pts} pts</div>
+        <div class="detail-result ${trade.result}">${trade.result === 'win' ? '+$' + Math.abs(trade.pnl).toLocaleString() : '-$' + Math.abs(trade.pnl).toLocaleString()}</div>
+        <div style="text-align:right;font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:4px">${trade.pts >= 0 ? '+' : ''}${trade.pts} pts</div>
       </div>
     </div>
 
     <div class="detail-grid">
       <div class="detail-card">
-        <div class="label">Risk/Reward</div>
-        <div class="val blue">${t.rr}</div>
+        <div class="label" id="detail-rr-label">Risk/Reward</div>
+        <div class="val blue">${trade.rr}</div>
       </div>
       <div class="detail-card">
         <div class="label">Puntos</div>
-        <div class="val ${t.result === 'win' ? 'green' : 'red'}">${t.pts >= 0 ? '+' : ''}${t.pts}</div>
+        <div class="val ${trade.result === 'win' ? 'green' : 'red'}">${trade.pts >= 0 ? '+' : ''}${trade.pts}</div>
       </div>
       <div class="detail-card">
         <div class="label">Resultado</div>
-        <div class="val ${t.result === 'win' ? 'green' : 'red'}">${t.result === 'win' ? 'WIN ✓' : 'LOSS ✕'}</div>
+        <div class="val ${trade.result === 'win' ? 'green' : 'red'}">${trade.result === 'win' ? 'WIN ✓' : 'LOSS ✕'}</div>
       </div>
     </div>
 
-    ${t.confirmations.length ? `
+    ${trade.confirmations.length ? `
     <div class="detail-section">
       <div class="sec-title">Confirmaciones del setup</div>
       <div class="detail-confs">
-        ${t.confirmations.map(c => `<span class="detail-conf">${c}</span>`).join('')}
+        ${trade.confirmations.map(c => `<span class="detail-conf">${c}</span>`).join('')}
       </div>
     </div>` : ''}
 
-    ${t.analysis ? `
+    ${trade.analysis ? `
     <div class="detail-section">
-      <div class="sec-title">Análisis del setup</div>
-      <div class="detail-text">${t.analysis}</div>
+      <div class="sec-title">${t('setupAnalysis')}</div>
+      <div class="detail-text">${trade.analysis}</div>
     </div>` : ''}
 
-    ${t.mindset ? `
+    ${trade.mindset ? `
     <div class="detail-section">
       <div class="sec-title">Proceso mental</div>
-      <div class="detail-text">${t.mindset}</div>
+      <div class="detail-text">${trade.mindset}</div>
     </div>` : ''}
 
-    ${t.screenshot ? `
+    ${trade.screenshot ? `
     <div class="detail-section">
-      <div class="sec-title">Screenshot del trade</div>
-      <img class="detail-screenshot" src="${t.screenshot}" alt="Trade screenshot">
+      <div class="sec-title">${t('tradeScreenshot')}</div>
+      <img class="detail-screenshot" src="${trade.screenshot}" alt="Trade screenshot">
     </div>` : ''}
+
+    <div class="comments-section" id="comments-${trade.id}">
+      <div class="cs-title">${t('comments')}</div>
+      <div id="comments-list-${trade.id}"><div style="font-size:12px;color:var(--text3)">Cargando...</div></div>
+      ${currentUser ? `
+      <div class="comment-input-wrap">
+        <input class="comment-input" id="comment-input-${trade.id}" placeholder="${t('addComment')}" onkeydown="if(event.key==='Enter')postComment(${trade.id})">
+        <button class="comment-send" onclick="postComment(${trade.id})">→</button>
+      </div>` : ''}
+    </div>
 
     <div class="action-row">
-      <button class="edit-btn" onclick="openEditModal(${t.id})">✏️ Editar trade</button>
-      <button class="delete-btn" onclick="deleteTrade(${t.id})">🗑 Eliminar trade</button>
+      <button class="edit-btn" onclick="openEditModal(${trade.id})">${window.t ? window.t('editTrade') : '✏️ Editar trade'}</button>
+      <button class="share-btn" onclick="openStoryModal(${trade.id})" style="background:rgba(0,220,130,0.1);border:1px solid rgba(0,220,130,0.3);color:var(--green)">📱 Story</button>
+      <button class="delete-btn" onclick="deleteTrade(${trade.id})">${window.t ? window.t('deleteTrade') : '🗑 Eliminar trade'}</button>
     </div>
   `;
 
-  document.getElementById('dashboard').classList.remove('active');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('detail-page').classList.add('active');
   window.scrollTo(0,0);
+  setTimeout(() => loadComments(id), 200);
 }
 
 async function deleteTrade(id) {
-  if (!confirm('¿Eliminar este trade?')) return;
+  if (!confirm(t('deleteConfirm'))) return;
   const trades = await getTrades();
   const trade = trades.find(t => t.id === id);
   if (trade && trade._docId) {
@@ -1836,13 +3867,13 @@ function renderInsights(trades) {
 
   // Best hour
   const hourMap = {};
-  trades.forEach(t => {
+  trades.forEach(tr => {
     // Use date as proxy — we don't store time yet, so show day of week
-    const d = new Date(t.date + 'T12:00:00');
+    const d = new Date(tr.date + 'T12:00:00');
     const day = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'][d.getDay()];
     if (!hourMap[day]) hourMap[day] = { wins: 0, total: 0 };
     hourMap[day].total++;
-    if (t.result === 'win') hourMap[day].wins++;
+    if (tr.result === 'win') hourMap[day].wins++;
   });
   let bestDay = null, bestWr = 0;
   Object.entries(hourMap).forEach(([day, data]) => {
@@ -1852,7 +3883,7 @@ function renderInsights(trades) {
   if (bestDay) {
     document.getElementById('ins-hour').textContent = bestDay;
     document.getElementById('ins-hour').className = 'value green';
-    document.getElementById('ins-hour-sub').textContent = Math.round(bestWr * 100) + '% win rate ese día';
+    document.getElementById('ins-hour-sub').textContent = Math.round(bestWr * 100) + '% win rate';
   }
 
   // Streak
@@ -1867,15 +3898,15 @@ function renderInsights(trades) {
   const streakEl = document.getElementById('ins-streak');
   streakEl.textContent = streak + (streakType === 'win' ? 'W' : 'L');
   streakEl.className = 'value ' + (streakType === 'win' ? 'green' : 'red');
-  document.getElementById('ins-streak-sub').textContent = streakType === 'win' ? 'racha ganadora ✓' : 'racha perdedora';
+  document.getElementById('ins-streak-sub').textContent = streakType === 'win' ? t('winStreak') : t('lossStreak');
 
   // Top confirmations by win rate
   const confMap = {};
-  trades.forEach(t => {
-    t.confirmations.forEach(c => {
+  trades.forEach(tr => {
+    (tr.confirmations || []).forEach(c => {
       if (!confMap[c]) confMap[c] = { wins: 0, total: 0 };
       confMap[c].total++;
-      if (t.result === 'win') confMap[c].wins++;
+      if (tr.result === 'win') confMap[c].wins++;
     });
   });
   const confArr = Object.entries(confMap)
@@ -1886,7 +3917,7 @@ function renderInsights(trades) {
 
   const confEl = document.getElementById('ins-confs');
   if (!confArr.length) {
-    confEl.innerHTML = '<div style="font-size:12px;color:var(--text3)">sin datos</div>';
+    confEl.innerHTML = `<div style="font-size:12px;color:var(--text3)">${t('noData')}</div>`;
     return;
   }
   confEl.innerHTML = confArr.map(c => `
@@ -1913,19 +3944,19 @@ function toggleWeekly() {
   }
 }
 
-function renderWeekly() {
-  const trades = getTrades();
+async function renderWeekly() {
+  const trades = await getTrades();
   const now = new Date();
   const startOfWeek = new Date(now);
   startOfWeek.setDate(now.getDate() - now.getDay());
   startOfWeek.setHours(0,0,0,0);
 
-  const weekly = trades.filter(t => new Date(t.date + 'T12:00:00') >= startOfWeek);
+  const weekly = trades.filter(tr => new Date(tr.date + 'T12:00:00') >= startOfWeek);
 
   const el = document.getElementById('weekly-content');
 
   if (!weekly.length) {
-    el.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:16px 0">No hay trades esta semana todavía.</div>';
+    el.innerHTML = `<div style="color:var(--text3);font-size:13px;padding:16px 0">${t('noTradesWeek')}</div>`;
     return;
   }
 
@@ -1936,13 +3967,13 @@ function renderWeekly() {
   const wr = Math.round((wins / weekly.length) * 100);
 
   // Best trade
-  const best = weekly.filter(t => t.result === 'win').sort((a,b) => b.pnl - a.pnl)[0];
+  const best = weekly.filter(tr => tr.result === 'win').sort((a,b) => b.pnl - a.pnl)[0];
 
   const caption = generateCaption(weekly, pnl, pts, wins, losses, wr, best);
 
   el.innerHTML = `
     <div class="weekly-modal">
-      <div class="wm-title">SEMANA ACTUAL</div>
+      <div class="wm-title">${t('weekTitle')}</div>
       <div class="weekly-grid">
         <div class="weekly-stat">
           <div class="wl">P&L</div>
@@ -1962,7 +3993,7 @@ function renderWeekly() {
         </div>
       </div>
       ${best ? `<div class="weekly-best">Mejor trade: <strong>${best.instrument} +$${best.pnl.toLocaleString()}</strong> con ${best.pts} pts</div>` : ''}
-      <div style="font-size:9px;color:var(--text3);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px">Caption para IG</div>
+      <div style="font-size:9px;color:var(--text3);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px">${t('igCaption')}</div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px;white-space:pre-wrap;font-family:var(--mono)">${caption}</div>
       <button class="copy-btn" onclick="copyCaption(\`${caption.replace(/`/g, '\`')}\`)">Copiar caption</button>
     </div>
@@ -2029,12 +4060,1862 @@ document.getElementById('edit-modal').addEventListener('click', function(e) {
   if (e.target === this) closeEditModal();
 });
 
+
+// ===== TRANSLATIONS =====
+const T = {
+  es: {
+    newTrade: '+ Nuevo Trade',
+    logout: 'Salir',
+    dashboard: 'Dashboard',
+    pnlTotal: 'P&L Total',
+    winRate: 'Win Rate',
+    totalPts: 'Puntos Totales',
+    rrAvg: 'RR Promedio',
+    bestDay: 'Mejor Horario',
+    streak: 'Racha Actual',
+    topConfs: 'Top Confirmaciones',
+    noData: 'sin datos',
+    noTrades: 'sin trades',
+    weeklySummary: 'Resumen Semanal',
+    viewSummary: '📊 Ver resumen',
+    history: 'Historial',
+    date: 'Fecha',
+    instrument: 'Instrumento',
+    confirmations: 'Confirmaciones',
+    points: 'Puntos',
+    pnl: 'P&L',
+    emptyTitle: 'SIN TRADES',
+    emptyDesc: 'Agrega tu primer trade con el botón de arriba.',
+    modalTitle: 'NUEVO TRADE',
+    direction: 'Dirección',
+    result: 'Resultado',
+    rr: 'Risk to Reward',
+    confsLabel: 'Confirmaciones del setup',
+    analysisLabel: 'Análisis del setup',
+    analysisPH: '¿Por qué tomaste este trade? ¿Qué viste en el gráfico?',
+    mindsetLabel: 'Proceso mental',
+    mindsetPH: '¿Cómo te sentiste? ¿Qué mejorar?',
+    screenshotLabel: 'Screenshot del trade',
+    saveBtn: 'GUARDAR TRADE',
+    saving: 'Guardando...',
+    winStreak: 'racha ganadora ✓',
+    lossStreak: 'racha perdedora',
+    tradeBreak: 'Trade breakdown',
+    setupAnalyzed: 'analizado.',
+    editTrade: '✏️ Editar trade',
+    deleteTrade: '🗑 Eliminar trade',
+    editTitle: 'EDITAR TRADE',
+    saveChanges: 'GUARDAR CAMBIOS',
+    editProfileTitle: 'EDITAR PERFIL',
+    editProfilePicHint: 'Toca para cambiar foto',
+    editProfileName: 'Nombre',
+    editProfileUsername: 'Usuario (@)',
+    editProfileBio: 'Bio',
+    editProfileBioPH: 'Cuéntale a la gente sobre tu trading...',
+    editProfileBtn: 'Editar',
+    editProfileSave: 'GUARDAR CAMBIOS',
+    menuEditProfile: 'Editar perfil',
+    menuSettings: 'Ajustes',
+    menuFeed: 'Feed',
+    feedTitle: 'FEED',
+    feedLive: 'EN VIVO',
+    feedEmpty: 'SIN ACTIVIDAD',
+    feedEmptyDesc: 'No hay trades públicos todavía.',
+    loading: 'Cargando...',
+    loadingProfile: 'Cargando perfil...',
+    followers: 'seguidores',
+    following: 'siguiendo',
+    follow: 'Seguir',
+    following_btn: 'Siguiendo',
+    settingsTitle: 'Ajustes',
+    settingsPrivacy: 'Privacidad',
+    settingsAccount: 'Cuenta',
+    settingsSession: 'Sesión',
+    settingsLogout: 'Cerrar sesión',
+    settingsExport: 'Exportar trades',
+    settingsExportDesc: 'Descarga todos tus trades en CSV',
+    settingsPublicLabel: 'Perfil público',
+    settingsPublicDesc: 'Permite que otros traders vean tus trades',
+    shareBtn: 'Compartir',
+    futuresTrader: 'Futures Trader',
+    poweredBy: 'Powered by',
+    back: '← Volver',
+    searchNoResults: 'Sin resultados',
+    searching: 'Buscando...',
+    searchError: 'Error al buscar',
+    weekTitle: 'SEMANA ACTUAL',
+    igCaption: 'Caption para IG',
+    copyCaption: 'Copiar caption',
+    noTradesWeek: 'No hay trades esta semana todavía.',
+    noTradesMonth: 'No hay trades este mes.',
+    ptsLabel2: 'puntos capturados',
+    pnlLabel: 'P&L del trade',
+    futuresLabel: 'FUTURES',
+    commentsTitle: 'Comentarios',
+    noComments: 'Sin comentarios aún.',
+    addComment: 'Añade un comentario...',
+    notifTitle: 'NOTIFICACIONES',
+    noNotifs: 'Sin notificaciones',
+    clearNotifs: 'Limpiar',
+    profileNotFound: 'PERFIL NO ENCONTRADO',
+    profilePrivate: 'Este perfil no existe o es privado.',
+    profileError: 'No se pudo cargar el perfil.',
+    loading: 'Cargando...',
+    loadingProfile: 'Cargando perfil...',
+    profileNotFound: 'PERFIL NO ENCONTRADO',
+    profilePrivate: 'Este perfil no existe o es privado.',
+    profileError: 'No se pudo cargar el perfil.',
+    followers: 'seguidores',
+    following: 'siguiendo',
+    futuresTrader: 'Futures Trader',
+    poweredBy: 'Powered by',
+    back: '← Volver',
+    comments: 'Comentarios',
+    addComment: 'Añade un comentario...',
+    noComments: 'Sin comentarios aún.',
+    setupConfirmations: 'Confirmaciones del setup',
+    setupAnalysis: 'Análisis del setup',
+    mentalProcess: 'Proceso mental',
+    tradeScreenshot: 'Screenshot del trade',
+    ptsLabel2: 'puntos capturados',
+    pnlLabel: 'P&L del trade',
+    noNotifications: 'Sin notificaciones',
+    clearNotif: 'Limpiar',
+    notifTitle: 'NOTIFICACIONES',
+    searching: 'Buscando...',
+    noResults: 'Sin resultados',
+    searchError: 'Error al buscar',
+    settingsTitle: 'AJUSTES',
+    settingsPrivacy: 'Privacidad',
+    settingsAccount: 'Cuenta',
+    settingsSession: 'Sesión',
+    settingsLogout: 'Cerrar sesión',
+    settingsExport: 'Exportar trades',
+    settingsExportDesc: 'Descarga todos tus trades en CSV',
+    settingsPublicLabel: 'Perfil público',
+    settingsPublicDesc: 'Permite que otros traders vean tus trades',
+    settingsEditDesc: 'Nombre, usuario, bio y foto',
+    storyTitle: 'GENERAR STORY',
+    storyDownload: '↓ Descargar Story',
+    installApp: 'Instalar como app',
+    installDesc: 'Toca Compartir → "Añadir a pantalla de inicio"',
+    weekTitle: 'SEMANA ACTUAL',
+    igCaption: 'Caption para IG',
+    copyCaption: 'Copiar caption',
+    copied: '✓ Copiado',
+    ptsLabel: 'pts capturados',
+    riskReward: 'risk to reward',
+    trades: 'trades',
+    deleteConfirm: '¿Eliminar este trade?',
+    authTitle: 'Trade Journal',
+    authDesc: 'Registra tus trades, analiza tu proceso y mejora cada día.',
+    googleBtn: 'Continuar con Google',
+    authFooter: 'Tus trades son privados y solo tú los puedes ver.',
+    followers: 'seguidores',
+    following: 'siguiendo',
+    futuresTrader: 'Futures Trader',
+    poweredBy: 'Powered by',
+    trades: 'Trades',
+    settings: 'Ajustes',
+    settingsPrivacy: 'Privacidad',
+    settingsAccount: 'Cuenta',
+    settingsSession: 'Sesión',
+    settingsPublicLabel: 'Perfil público',
+    settingsPublicDesc: 'Permite que otros traders vean tus trades',
+    settingsExportLabel: 'Exportar trades',
+    settingsExportDesc: 'Descarga todos tus trades en CSV',
+    settingsLogout: 'Cerrar sesión',
+    backBtn: '← Volver',
+    comments: 'Comentarios',
+    noComments: 'Sin comentarios aún.',
+    addComment: 'Añade un comentario...',
+    searching: 'Buscando...',
+    noResults: 'Sin resultados',
+    profileNotFound: 'PERFIL NO ENCONTRADO',
+    profilePrivate: 'Este perfil no existe o es privado.',
+    equityLabel: 'Curva de Equity',
+    instStatsTitle: 'Por Instrumento',
+    monthlyTitle: 'Resumen Mensual',
+    monthlyBtn: '📅 Ver mes',
+    notifications: 'NOTIFICACIONES',
+    clearNotifs: 'Limpiar',
+    noNotifs: 'Sin notificaciones',
+    storyTitle: 'GENERAR STORY',
+    downloadStory: '↓ Descargar Story',
+    winBadge: '✓ WIN',
+    lossBadge: '✕ LOSS',
+    pnlLabel: 'P&L del trade',
+    ptsCapLabel: 'puntos capturados',
+    setupLabel: 'SETUP DEL TRADE',
+    analysisTitle: 'Análisis del setup',
+    mindsetTitle: 'Proceso mental',
+    screenshotTitle: 'Screenshot del trade',
+    confirmationsTitle: 'Confirmaciones del setup',
+    detailRR: 'Risk/Reward',
+    detailPts: 'Puntos',
+    detailResult: 'Resultado',
+    storyBtn: '📱 Story',
+    editBtn: '✏️ Editar trade',
+    deleteBtn: '🗑 Eliminar trade',
+    noTradesWeek: 'No hay trades esta semana todavía.',
+    noTradesMonth: 'Sin trades este mes.',
+    exportLabel: '📥 Exportar CSV',
+    searchPlaceholder: 'Buscar trader...',
+    menuDashboard: 'Dashboard',
+    menuProfile: 'Mi Perfil',
+    menuNewTrade: 'Nuevo Trade',
+    menuLogout: 'Salir',
+    loading: 'Cargando...',
+    shareProfile: 'Compartir',
+    publicProfile: 'Perfil público',
+    enabled: 'activado',
+    disabled: 'desactivado',
+    copy: 'Copiar',
+  },
+  en: {
+    newTrade: '+ New Trade',
+    logout: 'Sign out',
+    dashboard: 'Dashboard',
+    pnlTotal: 'Total P&L',
+    winRate: 'Win Rate',
+    totalPts: 'Total Points',
+    rrAvg: 'Avg R:R',
+    bestDay: 'Best Day',
+    streak: 'Current Streak',
+    topConfs: 'Top Confirmations',
+    noData: 'no data',
+    noTrades: 'no trades',
+    weeklySummary: 'Weekly Summary',
+    viewSummary: '📊 View summary',
+    history: 'History',
+    date: 'Date',
+    instrument: 'Instrument',
+    confirmations: 'Confirmations',
+    points: 'Points',
+    pnl: 'P&L',
+    emptyTitle: 'NO TRADES',
+    emptyDesc: 'Add your first trade using the button above.',
+    modalTitle: 'NEW TRADE',
+    direction: 'Direction',
+    result: 'Result',
+    rr: 'Risk to Reward',
+    confsLabel: 'Setup confirmations',
+    analysisLabel: 'Setup analysis',
+    analysisPH: 'Why did you take this trade? What did you see?',
+    mindsetLabel: 'Mental process',
+    mindsetPH: 'How did you feel? What to improve?',
+    screenshotLabel: 'Trade screenshot',
+    saveBtn: 'SAVE TRADE',
+    saving: 'Saving...',
+    winStreak: 'winning streak ✓',
+    lossStreak: 'losing streak',
+    tradeBreak: 'Trade breakdown',
+    setupAnalyzed: 'analyzed.',
+    editTrade: '✏️ Edit trade',
+    deleteTrade: '🗑 Delete trade',
+    editTitle: 'EDIT TRADE',
+    saveChanges: 'SAVE CHANGES',
+    editProfileTitle: 'EDIT PROFILE',
+    editProfilePicHint: 'Tap to change photo',
+    editProfileName: 'Name',
+    editProfileUsername: 'Username (@)',
+    editProfileBio: 'Bio',
+    editProfileBioPH: 'Tell people about your trading...',
+    editProfileBtn: 'Edit',
+    editProfileSave: 'SAVE CHANGES',
+    menuEditProfile: 'Edit profile',
+    menuSettings: 'Settings',
+    menuFeed: 'Feed',
+    feedTitle: 'FEED',
+    feedLive: 'LIVE',
+    feedEmpty: 'NO ACTIVITY',
+    feedEmptyDesc: 'No public trades yet.',
+    loading: 'Loading...',
+    loadingProfile: 'Loading profile...',
+    followers: 'followers',
+    following: 'following',
+    follow: 'Follow',
+    following_btn: 'Following',
+    settingsTitle: 'Settings',
+    settingsPrivacy: 'Privacy',
+    settingsAccount: 'Account',
+    settingsSession: 'Session',
+    settingsLogout: 'Sign out',
+    settingsExport: 'Export trades',
+    settingsExportDesc: 'Download all your trades as CSV',
+    settingsPublicLabel: 'Public profile',
+    settingsPublicDesc: 'Allow other traders to see your trades',
+    shareBtn: 'Share',
+    futuresTrader: 'Futures Trader',
+    poweredBy: 'Powered by',
+    back: '← Back',
+    searchNoResults: 'No results',
+    searching: 'Searching...',
+    searchError: 'Search error',
+    weekTitle: 'CURRENT WEEK',
+    igCaption: 'IG Caption',
+    copyCaption: 'Copy caption',
+    noTradesWeek: 'No trades this week yet.',
+    noTradesMonth: 'No trades this month.',
+    ptsLabel2: 'pts captured',
+    pnlLabel: 'P&L',
+    futuresLabel: 'FUTURES',
+    commentsTitle: 'Comments',
+    noComments: 'No comments yet.',
+    addComment: 'Add a comment...',
+    notifTitle: 'NOTIFICATIONS',
+    noNotifs: 'No notifications',
+    clearNotifs: 'Clear',
+    profileNotFound: 'PROFILE NOT FOUND',
+    profilePrivate: 'This profile does not exist or is private.',
+    profileError: 'Could not load profile.',
+    loading: 'Loading...',
+    loadingProfile: 'Loading profile...',
+    profileNotFound: 'PROFILE NOT FOUND',
+    profilePrivate: "This profile doesn't exist or is private.",
+    profileError: 'Could not load profile.',
+    followers: 'followers',
+    following: 'following',
+    futuresTrader: 'Futures Trader',
+    poweredBy: 'Powered by',
+    back: '← Back',
+    comments: 'Comments',
+    addComment: 'Add a comment...',
+    noComments: 'No comments yet.',
+    setupConfirmations: 'Setup confirmations',
+    setupAnalysis: 'Setup analysis',
+    mentalProcess: 'Mental process',
+    tradeScreenshot: 'Trade screenshot',
+    ptsLabel2: 'captured points',
+    pnlLabel: 'Trade P&L',
+    noNotifications: 'No notifications',
+    clearNotif: 'Clear',
+    notifTitle: 'NOTIFICATIONS',
+    searching: 'Searching...',
+    noResults: 'No results',
+    searchError: 'Search error',
+    settingsTitle: 'SETTINGS',
+    settingsPrivacy: 'Privacy',
+    settingsAccount: 'Account',
+    settingsSession: 'Session',
+    settingsLogout: 'Sign out',
+    settingsExport: 'Export trades',
+    settingsExportDesc: 'Download all your trades as CSV',
+    settingsPublicLabel: 'Public profile',
+    settingsPublicDesc: 'Allow other traders to see your trades',
+    settingsEditDesc: 'Name, username, bio and photo',
+    storyTitle: 'GENERATE STORY',
+    storyDownload: '↓ Download Story',
+    installApp: 'Install app',
+    installDesc: 'Tap Share → "Add to Home Screen"',
+    weekTitle: 'CURRENT WEEK',
+    igCaption: 'IG Caption',
+    copyCaption: 'Copy caption',
+    copied: '✓ Copied',
+    ptsLabel: 'pts captured',
+    riskReward: 'risk to reward',
+    trades: 'trades',
+    deleteConfirm: 'Delete this trade?',
+    authTitle: 'Trade Journal',
+    authDesc: 'Log your trades, analyze your process and improve every day.',
+    googleBtn: 'Continue with Google',
+    authFooter: 'Your trades are private and only visible to you.',
+    followers: 'followers',
+    following: 'following',
+    futuresTrader: 'Futures Trader',
+    poweredBy: 'Powered by',
+    trades: 'Trades',
+    settings: 'Settings',
+    settingsPrivacy: 'Privacy',
+    settingsAccount: 'Account',
+    settingsSession: 'Session',
+    settingsPublicLabel: 'Public profile',
+    settingsPublicDesc: 'Allow other traders to see your trades',
+    settingsExportLabel: 'Export trades',
+    settingsExportDesc: 'Download all your trades as CSV',
+    settingsLogout: 'Sign out',
+    backBtn: '← Back',
+    comments: 'Comments',
+    noComments: 'No comments yet.',
+    addComment: 'Add a comment...',
+    searching: 'Searching...',
+    noResults: 'No results',
+    profileNotFound: 'PROFILE NOT FOUND',
+    profilePrivate: 'This profile does not exist or is private.',
+    equityLabel: 'Equity Curve',
+    instStatsTitle: 'By Instrument',
+    monthlyTitle: 'Monthly Summary',
+    monthlyBtn: '📅 View month',
+    notifications: 'NOTIFICATIONS',
+    clearNotifs: 'Clear',
+    noNotifs: 'No notifications',
+    storyTitle: 'GENERATE STORY',
+    downloadStory: '↓ Download Story',
+    winBadge: '✓ WIN',
+    lossBadge: '✕ LOSS',
+    pnlLabel: 'Trade P&L',
+    ptsCapLabel: 'points captured',
+    setupLabel: 'TRADE SETUP',
+    analysisTitle: 'Setup analysis',
+    mindsetTitle: 'Mental process',
+    screenshotTitle: 'Trade screenshot',
+    confirmationsTitle: 'Setup confirmations',
+    detailRR: 'Risk/Reward',
+    detailPts: 'Points',
+    detailResult: 'Result',
+    storyBtn: '📱 Story',
+    editBtn: '✏️ Edit trade',
+    deleteBtn: '🗑 Delete trade',
+    noTradesWeek: 'No trades this week yet.',
+    noTradesMonth: 'No trades this month.',
+    exportLabel: '📥 Export CSV',
+    searchPlaceholder: 'Search trader...',
+    menuDashboard: 'Dashboard',
+    menuProfile: 'My Profile',
+    menuNewTrade: 'New Trade',
+    menuLogout: 'Sign out',
+    loading: 'Loading...',
+    shareProfile: 'Share',
+    publicProfile: 'Public profile',
+    enabled: 'enabled',
+    disabled: 'disabled',
+    copy: 'Copy',
+  }
+};
+
+let currentLang = localStorage.getItem('lang') || 'es';
+
+function t(key) { return T[currentLang][key] || key; }
+
+function toggleLang() {
+  currentLang = currentLang === 'es' ? 'en' : 'es';
+  localStorage.setItem('lang', currentLang);
+  document.getElementById('lang-btn').textContent = currentLang === 'es' ? 'EN' : 'ES';
+  // Sync hamburger lang label
+  const hmLangLabel = document.getElementById('hm-lang-label');
+  if (hmLangLabel) hmLangLabel.textContent = currentLang === 'es' ? 'Cambiar a EN' : 'Switch to ES';
+  applyTranslations();
+  renderDashboard();
+  // Re-render profile if currently visible
+  if (document.getElementById('profile-page')?.classList.contains('active')) {
+    renderMyProfile();
+  }
+}
+
+function applyTranslations() {
+  // Header
+  const newTradeBtn = document.getElementById('new-trade-btn');
+  if (newTradeBtn) newTradeBtn.textContent = t('newTrade');
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) logoutBtn.textContent = t('logout');
+
+  // Auth screen
+  const authDesc = document.querySelector('.auth-desc');
+  if (authDesc) authDesc.textContent = t('authDesc');
+  const authFooter = document.querySelector('.auth-footer');
+  if (authFooter) authFooter.textContent = t('authFooter');
+
+  // Stat card labels
+  const statLabels = document.querySelectorAll('.stat-card .label');
+  const statKeys = ['pnlTotal', 'winRate', 'totalPts', 'rrAvg'];
+  statLabels.forEach((l, i) => { if (statKeys[i]) l.textContent = t(statKeys[i]); });
+
+  // Stat subs
+  const ptsCap = document.getElementById('txt-pts-captured');
+  if (ptsCap) ptsCap.textContent = t('ptsLabel');
+  const rrSub = document.getElementById('txt-rr-sub');
+  if (rrSub) rrSub.textContent = t('riskReward');
+
+  // Insight card labels
+  const insLabels = document.querySelectorAll('.insight-card .label');
+  const insKeys = ['bestDay', 'streak', 'topConfs'];
+  insLabels.forEach((l, i) => { if (insKeys[i]) l.textContent = t(insKeys[i]); });
+
+  // Section titles
+  const weeklyTitle = document.getElementById('txt-weekly-title');
+  if (weeklyTitle) weeklyTitle.textContent = t('weeklySummary');
+  const weeklyTitle2 = document.getElementById('txt-weekly-title2');
+  if (weeklyTitle2) weeklyTitle2.textContent = t('weeklySummary');
+  const historyTitle = document.getElementById('txt-history');
+  if (historyTitle) historyTitle.textContent = t('history');
+
+  // Weekly button
+  const weeklyBtnEl = document.getElementById('weekly-btn-el');
+  if (weeklyBtnEl) weeklyBtnEl.textContent = t('viewSummary');
+
+  // Monthly button
+  const monthlyBtnEl = document.getElementById('monthly-btn-el');
+  if (monthlyBtnEl) monthlyBtnEl.textContent = t('viewSummary');
+
+  // Table headers
+  const thDate = document.getElementById('th-date');
+  if (thDate) thDate.textContent = t('date');
+  const thInst = document.getElementById('th-instrument');
+  if (thInst) thInst.textContent = t('instrument');
+  const thConf = document.getElementById('th-confirmations');
+  if (thConf) thConf.textContent = t('confirmations');
+  const thPts = document.getElementById('th-points');
+  if (thPts) thPts.textContent = t('points');
+
+  // New trade modal
+  const modalTitle = document.querySelector('#modal .modal-title');
+  if (modalTitle) modalTitle.textContent = t('modalTitle');
+  const fAnalysis = document.getElementById('f-analysis');
+  if (fAnalysis) fAnalysis.placeholder = t('analysisPH');
+  const fMindset = document.getElementById('f-mindset');
+  if (fMindset) fMindset.placeholder = t('mindsetPH');
+  const submitBtn = document.querySelector('#modal .submit-btn');
+  if (submitBtn && !submitBtn.disabled) submitBtn.textContent = t('saveBtn');
+
+  // Edit trade modal
+  const editTitle = document.getElementById('edit-modal-title');
+  if (editTitle) editTitle.textContent = t('editTitle');
+  const editSaveBtn = document.querySelector('#edit-modal .submit-btn');
+  if (editSaveBtn && !editSaveBtn.disabled) editSaveBtn.textContent = t('saveChanges');
+
+  // Edit profile modal
+  const epModalTitle = document.getElementById('ep-modal-title');
+  if (epModalTitle) epModalTitle.textContent = t('editProfileTitle');
+  const epPicHint = document.getElementById('ep-pic-hint');
+  if (epPicHint) epPicHint.textContent = t('editProfilePicHint');
+  const epNameLabel = document.getElementById('ep-name-label');
+  if (epNameLabel) epNameLabel.textContent = t('editProfileName');
+  const epUsernameLabel = document.getElementById('ep-username-label');
+  if (epUsernameLabel) epUsernameLabel.textContent = t('editProfileUsername');
+  const epBioLabel = document.getElementById('ep-bio-label');
+  if (epBioLabel) epBioLabel.textContent = t('editProfileBio');
+  const epBio = document.getElementById('ep-bio');
+  if (epBio) epBio.placeholder = t('editProfileBioPH');
+  const epSaveBtn = document.getElementById('ep-save-btn');
+  if (epSaveBtn && !epSaveBtn.disabled) epSaveBtn.textContent = t('saveChanges');
+
+  // Settings modal
+  const settingsTitle = document.getElementById('settings-title');
+  if (settingsTitle) settingsTitle.textContent = t('settingsTitle');
+  const privacyTitle = document.getElementById('settings-privacy-title');
+  if (privacyTitle) privacyTitle.textContent = t('settingsPrivacy');
+  const accountTitle = document.getElementById('settings-account-title');
+  if (accountTitle) accountTitle.textContent = t('settingsAccount');
+  const sessionTitle = document.getElementById('settings-session-title');
+  if (sessionTitle) sessionTitle.textContent = t('settingsSession');
+  const logoutLabel = document.getElementById('settings-logout-label');
+  if (logoutLabel) logoutLabel.textContent = t('settingsLogout');
+  const exportLabel = document.getElementById('settings-export-label');
+  if (exportLabel) exportLabel.textContent = t('settingsExport');
+  const exportDesc = document.getElementById('settings-export-desc');
+  if (exportDesc) exportDesc.textContent = t('settingsExportDesc');
+  const publicLabelEl = document.getElementById('settings-public-label');
+  if (publicLabelEl) publicLabelEl.textContent = t('settingsPublicLabel');
+  const publicDescEl = document.getElementById('settings-public-desc');
+  if (publicDescEl) publicDescEl.textContent = t('settingsPublicDesc');
+
+  // Hamburger menu items
+  const miDash = document.getElementById('mi-dashboard');
+  if (miDash) miDash.textContent = t('menuDashboard');
+  const miProfile = document.getElementById('mi-profile');
+  if (miProfile) miProfile.textContent = t('menuProfile');
+  const miSettings = document.getElementById('hm-settings-label');
+  if (miSettings) miSettings.textContent = t('menuSettings');
+  const miNew = document.getElementById('mobile-new-trade-label');
+  if (miNew) miNew.textContent = t('menuNewTrade');
+  const miLogout = document.getElementById('mobile-logout-label');
+  if (miLogout) miLogout.textContent = t('menuLogout');
+  const mobileSearch = document.getElementById('mobile-search-input');
+  if (mobileSearch) mobileSearch.placeholder = t('menuSearch');
+  const desktopSearch = document.getElementById('desktop-search-input');
+  if (desktopSearch) desktopSearch.placeholder = t('menuSearch');
+
+  // Back buttons
+  const backDetailEl = document.getElementById('back-btn-detail');
+  if (backDetailEl) backDetailEl.textContent = t('back');
+  const backPubEl = document.getElementById('back-btn-pub');
+  if (backPubEl) backPubEl.textContent = t('back');
+
+  // Notification panel
+  const notifTitleEl = document.getElementById('notif-panel-title');
+  if (notifTitleEl) notifTitleEl.textContent = t('notifTitle');
+  const notifClearEl = document.getElementById('notif-clear-btn');
+  if (notifClearEl) notifClearEl.textContent = t('clearNotifs');
+
+  // Followers/following labels (in DOM after render)
+  const followersLblEl = document.getElementById('followers-label');
+  if (followersLblEl) followersLblEl.textContent = t('followers');
+  const followingLblEl = document.getElementById('following-label');
+  if (followingLblEl) followingLblEl.textContent = t('following');
+
+  // Profile badge
+  const myBadgeEl = document.getElementById('my-profile-badge');
+  if (myBadgeEl) myBadgeEl.textContent = t('futuresTrader');
+
+  // No data texts in insights
+  const insHourSub = document.getElementById('ins-hour-sub');
+  if (insHourSub && !insHourSub.textContent.includes('%')) insHourSub.textContent = t('noData');
+  const insStreakSub = document.getElementById('ins-streak-sub');
+  if (insStreakSub && (insStreakSub.textContent === 'sin trades' || insStreakSub.textContent === 'no trades' || insStreakSub.textContent === '')) insStreakSub.textContent = t('noTrades');
+  const insConfsEl = document.getElementById('ins-confs');
+  if (insConfsEl && !insConfsEl.querySelector('.conf-bar-row')) {
+    insConfsEl.innerHTML = `<div style="font-size:12px;color:var(--text3)">${t('noData')}</div>`;
+  }
+
+  // PWA banner
+  const pwaTitle = document.getElementById('pwa-title');
+  if (pwaTitle) pwaTitle.textContent = t('installApp');
+  const pwaDesc = document.getElementById('pwa-desc');
+  if (pwaDesc) pwaDesc.textContent = t('installDesc');
+  const pwaBtn = document.getElementById('pwa-install-btn');
+  if (pwaBtn) pwaBtn.textContent = currentLang === 'es' ? 'Instalar' : 'Install';
+
+  // Upload screenshot label
+  const uploadText = document.querySelector('.upload-text');
+  if (uploadText) uploadText.textContent = currentLang === 'es' ? 'Toca para subir el screenshot' : 'Tap to upload screenshot';
+}
+
+// ===== PWA =====
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('pwa-banner').classList.add('show');
+});
+
+document.getElementById('pwa-install-btn').addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const result = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    document.getElementById('pwa-banner').classList.remove('show');
+  }
+});
+
+function closePwaBanner() {
+  document.getElementById('pwa-banner').classList.remove('show');
+  localStorage.setItem('pwa-dismissed', '1');
+  sessionStorage.setItem('pwa-shown', '1');
+}
+
+// Show iOS instructions if on Safari iPhone and not installed
+function checkIOSInstall() {
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone;
+  const dismissed = localStorage.getItem('pwa-dismissed');
+  if (isIOS && !isStandalone && !dismissed) {
+    const banner = document.getElementById('pwa-banner');
+    banner.classList.add('show');
+    document.getElementById('pwa-title').textContent = t('installApp');
+    document.getElementById('pwa-desc').textContent = t('installDesc');
+    banner.querySelector('#pwa-install-btn').style.display = 'none';
+  }
+}
+
+// Only show once per session
+if (!sessionStorage.getItem('pwa-shown')) {
+  setTimeout(() => {
+    checkIOSInstall();
+    sessionStorage.setItem('pwa-shown', '1');
+  }, 4000);
+}
+// Auto dismiss after 8 seconds
+setTimeout(() => {
+  const banner = document.getElementById('pwa-banner');
+  if (banner && banner.classList.contains('show')) {
+    closePwaBanner();
+  }
+}, 10000);
+
+
+// ===== EQUITY CHART =====
+function renderEquityChart(trades) {
+  if (!trades.length) return;
+  document.getElementById('equity-section').style.display = 'block';
+  const canvas = document.getElementById('equity-canvas');
+  const wrap = canvas.parentElement;
+  canvas.width = wrap.offsetWidth || 300;
+  canvas.height = 120;
+  const ctx = canvas.getContext('2d');
+
+  // Build cumulative PnL
+  const sorted = [...trades].reverse();
+  let cum = 0;
+  const points = sorted.map(tr => { cum += tr.pnl; return cum; });
+  points.unshift(0);
+
+  const min = Math.min(...points);
+  const max = Math.max(...points);
+  const range = max - min || 1;
+  const W = canvas.width, H = canvas.height;
+  const pad = 10;
+
+  const x = (i) => pad + (i / (points.length - 1)) * (W - pad * 2);
+  const y = (v) => H - pad - ((v - min) / range) * (H - pad * 2);
+
+  // Gradient fill
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, 'rgba(0,220,130,0.3)');
+  grad.addColorStop(1, 'rgba(0,220,130,0)');
+
+  ctx.beginPath();
+  ctx.moveTo(x(0), y(points[0]));
+  points.forEach((p, i) => { if (i > 0) ctx.lineTo(x(i), y(p)); });
+  ctx.lineTo(x(points.length - 1), H);
+  ctx.lineTo(x(0), H);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  ctx.moveTo(x(0), y(points[0]));
+  points.forEach((p, i) => { if (i > 0) ctx.lineTo(x(i), y(p)); });
+  ctx.strokeStyle = '#00dc82';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
+// ===== INSTRUMENT STATS =====
+function renderInstrumentStats(trades) {
+  if (!trades.length) return;
+  document.getElementById('inst-stats-section').style.display = 'block';
+  const map = {};
+  trades.forEach(tr => {
+    if (!tr.instrument) return;
+    if (!map[tr.instrument]) map[tr.instrument] = { wins: 0, total: 0, pnl: 0, pts: 0 };
+    map[tr.instrument].total++;
+    map[tr.instrument].pnl += (tr.pnl || 0);
+    map[tr.instrument].pts += (tr.pts || 0);
+    if (tr.result === 'win') map[tr.instrument].wins++;
+  });
+
+  const grid = document.getElementById('inst-grid');
+  grid.innerHTML = Object.entries(map).sort((a,b) => b[1].total - a[1].total).map(([inst, d]) => {
+    const wr = Math.round((d.wins / d.total) * 100);
+    return `
+    <div class="inst-card">
+      <div class="inst-name">${inst}</div>
+      <div class="inst-row">Trades <span>${d.total}</span></div>
+      <div class="inst-row">P&L <span style="color:${d.pnl >= 0 ? 'var(--green)' : 'var(--red)'}">${d.pnl >= 0 ? '+$' : '-$'}${Math.abs(d.pnl).toLocaleString()}</span></div>
+      <div class="inst-row">Puntos <span style="color:${d.pts >= 0 ? 'var(--green)' : 'var(--red)'}">${d.pts >= 0 ? '+' : ''}${d.pts.toFixed(1)}</span></div>
+      <div class="inst-wr" style="color:${wr >= 50 ? 'var(--green)' : 'var(--red)'}">${wr}% WR</div>
+    </div>`;
+  }).join('');
+}
+
+// ===== MONTHLY SUMMARY =====
+function toggleMonthly() {
+  const el = document.getElementById('monthly-content');
+  if (el.style.display === 'none') {
+    el.style.display = 'block';
+    renderMonthly();
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+async function renderMonthly() {
+  const trades = await getTrades();
+  const el = document.getElementById('monthly-content');
+  if (!trades.length) {
+    el.innerHTML = `<div style="color:var(--text3);font-size:13px;padding:8px 0">${t('noTradesMonth')}</div>`;
+    return;
+  }
+
+  const now = new Date();
+  const monthly = trades.filter(tr => {
+    const d = new Date(tr.date + 'T12:00:00');
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  });
+
+  const pnl = monthly.reduce((s, tr) => s + tr.pnl, 0);
+  const pts = monthly.reduce((s, tr) => s + tr.pts, 0);
+  const wins = monthly.filter(tr => tr.result === 'win').length;
+  const losses = monthly.filter(tr => tr.result === 'loss').length;
+  const wr = monthly.length ? Math.round((wins / monthly.length) * 100) : 0;
+  const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const best = monthly.filter(tr => tr.result === 'win').sort((a,b) => b.pnl - a.pnl)[0];
+  const caption = generateMonthlyCap(monthly, pnl, pts, wins, losses, wr, best, monthNames[now.getMonth()]);
+
+  el.innerHTML = `
+    <div class="weekly-modal">
+      <div class="wm-title">${monthNames[now.getMonth()].toUpperCase()} ${now.getFullYear()}</div>
+      <div class="weekly-grid">
+        <div class="weekly-stat"><div class="wl">P&L</div><div class="wv ${pnl >= 0 ? 'green' : 'red'}">${pnl >= 0 ? '+$' : '-$'}${Math.abs(pnl).toLocaleString()}</div></div>
+        <div class="weekly-stat"><div class="wl">Win Rate</div><div class="wv">${wr}%</div></div>
+        <div class="weekly-stat"><div class="wl">Trades</div><div class="wv">${monthly.length} <span style="font-size:12px;color:var(--text3)">${wins}W/${losses}L</span></div></div>
+        <div class="weekly-stat"><div class="wl">Puntos</div><div class="wv ${pts >= 0 ? 'green' : 'red'}">${pts >= 0 ? '+' : ''}${pts.toFixed(1)}</div></div>
+      </div>
+      ${best ? `<div class="weekly-best">Mejor trade: <strong>${best.instrument} +$${best.pnl.toLocaleString()}</strong> con ${best.pts} pts</div>` : ''}
+      <div style="font-size:9px;color:var(--text3);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px">${t('igCaption')}</div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px;white-space:pre-wrap;font-family:var(--mono)">${caption}</div>
+      <button class="copy-btn" onclick="copyMonthlyCap(\`${caption.replace(/\`/g,'\\`')}\`)">Copiar caption</button>
+    </div>`;
+}
+
+function generateMonthlyCap(trades, pnl, pts, wins, losses, wr, best, monthName) {
+  const sign = pnl >= 0 ? '+' : '';
+  return [
+    `${monthName} en números 📊`,
+    ``,
+    `📊 ${trades.length} trades — ${wins}W / ${losses}L`,
+    `💰 P&L: ${sign}$${Math.abs(pnl).toLocaleString()}`,
+    `📈 Puntos: ${pts >= 0 ? '+' : ''}${pts.toFixed(1)} pts`,
+    `🎯 Win rate: ${wr}%`,
+    ``,
+    best ? `Mejor setup del mes: ${best.instrument} ${best.pts > 0 ? '+' : ''}${best.pts} pts` : '',
+    ``,
+    `El proceso sigue. Mes a mes.`,
+    ``,
+    `@med0lyne`,
+    `#trading #futuros #NQ #tradingjourney #daytrading`
+  ].filter(l => l !== undefined).join('\n');
+}
+
+function copyMonthlyCap(caption) {
+  const clean = caption.replace(/\\n/g, '\n').replace(/\n/g, '\n');
+  navigator.clipboard.writeText(clean).then(() => {
+    const btn = document.querySelector('#monthly-content .copy-btn');
+    if (btn) { btn.textContent = '✓ Copiado'; setTimeout(() => btn.textContent = 'Copiar caption', 2000); }
+  });
+}
+
+// ===== NOTIFICATIONS =====
+let notifOpen = false;
+
+async function loadNotifications() {
+  if (!currentUser) return;
+  try {
+    const q = query(
+      collection(db, 'notifications'),
+      where('toUid', '==', currentUser.uid),
+      orderBy('createdAt', 'desc')
+    );
+    const snap = await getDocs(q);
+    const notifs = snap.docs.map(d => ({ ...d.data(), _id: d.id }));
+    const unread = notifs.filter(n => !n.read).length;
+
+    document.getElementById('notif-btn').classList.add('show');
+    if (unread > 0) document.getElementById('notif-dot').classList.add('show');
+    else document.getElementById('notif-dot').classList.remove('show');
+
+    const list = document.getElementById('notif-list');
+    if (!notifs.length) {
+      list.innerHTML = `<div class="notif-empty">${t('noNotifications')}</div>`;
+      return;
+    }
+
+    const notifEls = notifs.slice(0, 20).map(n => {
+      const hasAction = (n.type === 'comment' && n.tradeDocId) || (n.type === 'follow' && n.fromUsername);
+      return `
+      <div class="notif-item ${n.read ? '' : 'unread'}"
+        style="cursor:${hasAction ? 'pointer' : 'default'}"
+        data-type="${n.type || ''}"
+        data-tradedocid="${n.tradeDocId || ''}"
+        data-username="${n.fromUsername || ''}">
+        ${n.message}
+        <div class="ni-time">${timeAgo(n.createdAt)}</div>
+      </div>`;
+    }).join('');
+    list.innerHTML = notifEls;
+
+    // Bind click events after render
+    list.querySelectorAll('.notif-item').forEach(el => {
+      const type = el.dataset.type;
+      const tradeDocId = el.dataset.tradedocid;
+      const username = el.dataset.username;
+      if ((type === 'comment' && tradeDocId) || (type === 'follow' && username)) {
+        el.addEventListener('click', async () => {
+          // Close panel
+          const panel = document.getElementById('notif-panel');
+          if (panel) panel.classList.remove('show');
+          notifOpen = false;
+          // Navigate directly using module-scope functions
+          if (type === 'comment' && tradeDocId) {
+            try {
+              const snap = await getDoc(doc(db, COLLECTION, tradeDocId));
+              if (snap.exists()) {
+                const trade = { ...snap.data(), _docId: snap.id };
+                if (trade.uid === currentUser?.uid) {
+                  showDetail(trade.id, 'dashboard');
+                } else {
+                  showPublicTrade(trade, username);
+                }
+              }
+            } catch(e) { console.error('notif nav error:', e); }
+          } else if (type === 'follow' && username) {
+            goToTrader(username);
+          }
+        });
+      }
+    });
+  } catch(e) { console.error(e); }
+}
+
+async function handleNotifClick(type, tradeDocId, username) {
+  document.getElementById('notif-panel').classList.remove('show');
+  if (type === 'comment' && tradeDocId) {
+    // Open the trade directly
+    try {
+      const snap = await getDoc(doc(db, COLLECTION, tradeDocId));
+      if (snap.exists()) {
+        const trade = { ...snap.data(), _docId: snap.id };
+        // Check if it's our own trade
+        if (trade.uid === currentUser?.uid) {
+          showDetail(trade.id, 'dashboard');
+        } else {
+          showPublicTrade(trade, username);
+        }
+      }
+    } catch(e) { console.error(e); }
+  } else if (type === 'follow' && username) {
+    goToTrader(username);
+  }
+}
+
+async function markNotificationsRead() {
+  if (!currentUser) return;
+  try {
+    const q = query(
+      collection(db, 'notifications'),
+      where('toUid', '==', currentUser.uid),
+      where('read', '==', false)
+    );
+    const snap = await getDocs(q);
+    if (snap.empty) return;
+    const batch = writeBatch(db);
+    snap.docs.forEach(d => batch.update(d.ref, { read: true }));
+    await batch.commit();
+    document.getElementById('notif-dot').classList.remove('show');
+  } catch(e) { console.error(e); }
+}
+
+async function clearNotifications() {
+  document.getElementById('notif-list').innerHTML = `<div class="notif-empty">${t('noNotifications')}</div>`;
+  document.getElementById('notif-dot').classList.remove('show');
+}
+
+function toggleNotifPanel() {
+  const panel = document.getElementById('notif-panel');
+  notifOpen = !notifOpen;
+  panel.classList.toggle('show', notifOpen);
+  if (notifOpen) {
+    markNotificationsRead();
+  }
+}
+
+function timeAgo(ts) {
+  const diff = Date.now() - ts;
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return 'ahora';
+  if (m < 60) return m + 'm';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + 'h';
+  return Math.floor(h / 24) + 'd';
+}
+
+async function sendNotification(toUid, message, action = {}) {
+  if (!toUid || toUid === currentUser?.uid) return;
+  try {
+    await addDoc(collection(db, 'notifications'), {
+      toUid, message, read: false, createdAt: Date.now(), ...action
+    });
+  } catch(e) {}
+}
+
+// ===== FOLLOW SYSTEM =====
+async function toggleFollow(targetUid) {
+  if (!currentUser) return;
+  const btn = document.getElementById('follow-btn-pub');
+  const followRef = doc(db, 'follows', currentUser.uid + '_' + targetUid);
+  try {
+    const snap = await getDoc(followRef);
+    if (snap.exists()) {
+      await deleteDoc(followRef);
+      if (btn) { btn.textContent = t('follow'); btn.classList.remove('following'); }
+    } else {
+      await setDoc(followRef, {
+        fromUid: currentUser.uid,
+        toUid: targetUid,
+        createdAt: Date.now()
+      });
+      if (btn) { btn.textContent = t('following_btn'); btn.classList.add('following'); }
+      // Notify
+      const myProfile = await getUserProfile(currentUser.uid);
+      sendNotification(targetUid, `@${myProfile?.username || 'alguien'} empezó a seguirte`, { type: 'follow', fromUsername: myProfile?.username || '' });
+    }
+  } catch(e) { console.error(e); }
+}
+
+async function checkFollowing(targetUid) {
+  if (!currentUser) return false;
+  try {
+    const snap = await getDoc(doc(db, 'follows', currentUser.uid + '_' + targetUid));
+    return snap.exists();
+  } catch(e) { return false; }
+}
+
+async function getFollowerCount(targetUid) {
+  try {
+    const q = query(collection(db, 'follows'), where('toUid', '==', targetUid));
+    const snap = await getDocs(q);
+    return snap.size;
+  } catch(e) { return 0; }
+}
+
+// ===== COMMENTS =====
+async function loadComments(tradeId) {
+  await loadCommentsInto(tradeId, 'comments-list-' + tradeId);
+}
+
+async function loadCommentsInto(tradeId, targetId) {
+  try {
+    const q = query(
+      collection(db, 'comments'),
+      where('tradeId', '==', String(tradeId)),
+      orderBy('createdAt', 'asc')
+    );
+    const snap = await getDocs(q);
+    const listEl = document.getElementById(targetId);
+    if (!listEl) return;
+
+    if (snap.empty) {
+      listEl.innerHTML = `<div style="font-size:12px;color:var(--text3);padding:4px 0">${t('noComments')}</div>`;
+      return;
+    }
+
+    listEl.innerHTML = snap.docs.map(d => {
+      const c = d.data();
+      return `
+      <div class="comment-item">
+        <div class="comment-avatar">${c.photoURL ? `<img src="${c.photoURL}" alt="">` : (c.username || '?').slice(0,2).toUpperCase()}</div>
+        <div class="comment-body">
+          <div class="comment-handle">@${c.username || 'trader'}</div>
+          <div class="comment-text">${c.text}</div>
+          <div class="comment-time">${timeAgo(c.createdAt)}</div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) { console.error(e); }
+}
+
+async function postComment(tradeId) {
+  if (!currentUser) return;
+  const input = document.getElementById('comment-input-' + tradeId) ||
+                document.getElementById('pub-comment-input-' + tradeId);
+  const text = input?.value?.trim();
+  if (!text) return;
+
+  input.value = '';
+  try {
+    const myProfile = await getUserProfile(currentUser.uid);
+    const myUsername = myProfile?.username || currentUser.displayName || 'trader';
+    await addDoc(collection(db, 'comments'), {
+      tradeId: String(tradeId),
+      text,
+      uid: currentUser.uid,
+      username: myUsername,
+      photoURL: myProfile?.photoURL || currentUser.photoURL || '',
+      createdAt: Date.now()
+    });
+    loadComments(tradeId);
+    const pubList = document.getElementById('pub-comments-list-' + tradeId);
+    if (pubList) loadCommentsInto(tradeId, 'pub-comments-list-' + tradeId);
+    // Notify trade owner
+    const trades = await getTrades();
+    const trade = trades.find(tr => tr.id === tradeId);
+    if (trade && trade.uid && trade.uid !== currentUser.uid) {
+      sendNotification(trade.uid, `@${myUsername} comentó en tu trade ${trade.instrument}`, { type: 'comment', tradeId: String(tradeId), tradeDocId: trade._docId || '' });
+    }
+  } catch(e) { console.error(e); }
+}
+
+// ===== STORY GENERATOR =====
+let currentStoryTradeId = null;
+
+function openStoryModal(tradeId) {
+  currentStoryTradeId = tradeId;
+  document.getElementById('story-modal').classList.add('open');
+  setTimeout(() => generateStoryCanvas(tradeId), 100);
+}
+
+function closeStoryModal() {
+  document.getElementById('story-modal').classList.remove('open');
+}
+
+async function generateStoryCanvas(tradeId) {
+  const trades = await getTrades();
+  const trade = trades.find(tr => tr.id === tradeId);
+  if (!trade) return;
+
+  const canvas = document.getElementById('story-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = 1080;
+  canvas.height = 1920;
+  const W = 1080, H = 1920;
+  const isWin = trade.result === 'win';
+
+  function drawUI() {
+    // Top gradient
+    const tg = ctx.createLinearGradient(0, 0, 0, 500);
+    tg.addColorStop(0, 'rgba(0,0,0,0.9)');
+    tg.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = tg; ctx.fillRect(0, 0, W, 500);
+
+    // Bottom gradient
+    const bg = ctx.createLinearGradient(0, H-600, 0, H);
+    bg.addColorStop(0, 'rgba(0,0,0,0)');
+    bg.addColorStop(1, 'rgba(0,0,0,0.95)');
+    ctx.fillStyle = bg; ctx.fillRect(0, H-600, W, 600);
+
+    // Instrument + direction (top left)
+    ctx.font = 'bold 72px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'left';
+    ctx.fillText(trade.instrument + '  ' + trade.direction, 60, 110);
+
+    // Timeframe
+    ctx.font = '34px monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.fillText('FUTURES · 1M', 60, 165);
+
+    // WIN/LOSS badge (top right, doesn't overlap instrument)
+    const badgeW = 160, badgeH = 64, badgeX = W - badgeW - 60, badgeY = 55;
+    ctx.fillStyle = isWin ? 'rgba(0,220,130,0.2)' : 'rgba(255,68,85,0.2)';
+    ctx.strokeStyle = isWin ? '#00dc82' : '#ff4455';
+    ctx.lineWidth = 2;
+    roundRect(ctx, badgeX, badgeY, badgeW, badgeH, 12); ctx.fill(); ctx.stroke();
+    ctx.font = 'bold 30px Arial';
+    ctx.fillStyle = isWin ? '#00dc82' : '#ff4455';
+    ctx.textAlign = 'center';
+    ctx.fillText(isWin ? '✓ WIN' : '✕ LOSS', badgeX + badgeW/2, badgeY + 40);
+    ctx.textAlign = 'left';
+
+    // Confirmations row
+    let cx = 60, cy = 210;
+    (trade.confirmations||[]).slice(0,5).forEach(c => {
+      ctx.font = '28px Arial';
+      const tw = ctx.measureText(c).width;
+      const pw = tw + 30, ph = 50;
+      if (cx + pw > W - 60) return;
+      ctx.fillStyle = 'rgba(255,255,255,0.08)';
+      ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+      ctx.lineWidth = 1.5;
+      roundRect(ctx, cx, cy, pw, ph, 8); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,0.65)';
+      ctx.fillText(c, cx + 15, cy + 34);
+      cx += pw + 16;
+    });
+
+    // Divider
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(60, H-180); ctx.lineTo(W-60, H-180); ctx.stroke();
+
+    // P&L (large, bottom left)
+    const pnlText = (trade.pnl >= 0 ? '+$' : '-$') + Math.abs(trade.pnl).toLocaleString();
+    ctx.font = 'bold 140px Arial';
+    ctx.fillStyle = isWin ? '#00dc82' : '#ff4455';
+    ctx.textAlign = 'left';
+    ctx.fillText(pnlText, 60, H - 330);
+
+    ctx.font = '32px monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.fillText(t('pnlLabel'), 60, H - 280);
+
+    // Points (bottom right)
+    const ptsText = (trade.pts >= 0 ? '+' : '') + trade.pts + ' pts';
+    ctx.font = 'bold 56px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'right';
+    ctx.fillText(ptsText, W - 60, H - 330);
+
+    ctx.font = '32px monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.fillText(t('ptsLabel2'), W - 60, H - 280);
+
+    // Handle
+    ctx.font = '34px monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.textAlign = 'center';
+    ctx.fillText('@med0lyne', W / 2, H - 80);
+    ctx.textAlign = 'left';
+  }
+
+  // Draw base
+  ctx.fillStyle = '#080808';
+  ctx.fillRect(0, 0, W, H);
+
+  if (trade.screenshot) {
+    const img = new Image();
+    img.onload = () => {
+      // Fit screenshot in middle section (between top bar and bottom bar)
+      const topH = 290, botH = 500;
+      const availH = H - topH - botH;
+      const scale = Math.min(W / img.width, availH / img.height);
+      const sw = img.width * scale;
+      const sh = img.height * scale;
+      const sx = (W - sw) / 2;
+      const sy = topH + (availH - sh) / 2;
+      ctx.drawImage(img, sx, sy, sw, sh);
+      drawUI();
+    };
+    img.onerror = drawUI;
+    img.src = trade.screenshot;
+  } else {
+    ctx.strokeStyle = 'rgba(0,220,130,0.03)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for (let y = 0; y < H; y += 60) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+    drawUI();
+  }
+}
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function downloadStory() {
+  const canvas = document.getElementById('story-canvas');
+  const link = document.createElement('a');
+  link.download = 'med0lyne_story_1080x1920.png';
+  // Use max quality PNG
+  link.href = canvas.toDataURL('image/png', 1.0);
+  link.click();
+}
+
+// ===== BACKUP / EXPORT CSV =====
+async function exportCSV() {
+  const trades = await getTrades();
+  if (!trades.length) { alert('No hay trades para exportar.'); return; }
+
+  const headers = ['Fecha','Instrumento','Dirección','Resultado','Puntos','P&L','RR','Confirmaciones','Análisis','Proceso Mental'];
+  const rows = trades.map(t => [
+    t.date, t.instrument, t.direction, t.result,
+    t.pts, t.pnl, t.rr,
+    '"' + (t.confirmations || []).join(', ') + '"',
+    '"' + (t.analysis || '').replace(/"/g, "'") + '"',
+    '"' + (t.mindset || '').replace(/"/g, "'") + '"'
+  ]);
+
+  const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.download = 'med0lyne_trades.csv';
+  link.href = url;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+let currentPublicProfileUsername = null;
+
+function goBackToPublicProfile() {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('profile-page').classList.add('active');
+}
+
+async function showPublicTrade(trade, username) {
+  currentPublicProfileUsername = username;
+  window._currentPublicTradeUid = trade.uid || null;
+  window._currentPublicTradeDocId = trade._docId || '';
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('pub-detail-page').classList.add('active');
+  window.scrollTo(0,0);
+
+  const el = document.getElementById('pub-detail-content');
+  const isWin = trade.result === 'win';
+
+  el.innerHTML = `
+    <div class="detail-header">
+      <div>
+        <div class="detail-instrument">${trade.instrument} <span style="font-size:24px;color:var(--text3)">${trade.direction}</span></div>
+        <div class="detail-date">${formatDateFull(trade.date)}</div>
+      </div>
+      <div>
+        <div class="detail-result ${trade.result}">${trade.pnl>=0?'+$':'-$'}${Math.abs(trade.pnl).toLocaleString()}</div>
+        <div style="text-align:right;font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:4px">${trade.pts>=0?'+':''}${trade.pts} pts</div>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-card"><div class="label">Risk/Reward</div><div class="val blue">${trade.rr}</div></div>
+      <div class="detail-card"><div class="label">Puntos</div><div class="val ${isWin?'green':'red'}">${trade.pts>=0?'+':''}${trade.pts}</div></div>
+      <div class="detail-card"><div class="label">Resultado</div><div class="val ${isWin?'green':'red'}">${isWin?'WIN ✓':'LOSS ✕'}</div></div>
+    </div>
+
+    ${trade.confirmations?.length ? `
+    <div class="detail-section">
+      <div class="sec-title">${t('setupConfirmations')}</div>
+      <div class="detail-confs">
+        ${trade.confirmations.map(c=>`<span class="detail-conf">${c}</span>`).join('')}
+      </div>
+    </div>` : ''}
+
+    ${trade.analysis ? `
+    <div class="detail-section">
+      <div class="sec-title">${t('setupAnalysis')}</div>
+      <div class="detail-text">${trade.analysis}</div>
+    </div>` : ''}
+
+    ${trade.screenshot ? `
+    <div class="detail-section">
+      <div class="sec-title">${t('tradeScreenshot')}</div>
+      <img class="detail-screenshot" src="${trade.screenshot}" alt="">
+    </div>` : ''}
+
+    <div class="comments-section" id="pub-trade-comments">
+      <div class="cs-title">${t('comments')}</div>
+      <div id="pub-trade-comments-list"><div style="font-size:12px;color:var(--text3)">Cargando...</div></div>
+      ${currentUser ? `
+      <div class="comment-input-wrap">
+        <input class="comment-input" id="pub-trade-comment-input" placeholder="${t('addComment')}" onkeydown="if(event.key==='Enter')postPublicComment(${trade.id})">
+        <button class="comment-send" onclick="postPublicComment(${trade.id})">→</button>
+      </div>` : ''}
+    </div>
+  `;
+
+  setTimeout(() => loadCommentsInto(trade.id, 'pub-trade-comments-list'), 200);
+}
+
+async function postPublicComment(tradeId) {
+  if (!currentUser) return;
+  const input = document.getElementById('pub-trade-comment-input');
+  const text = input?.value?.trim();
+  if (!text) return;
+  input.value = '';
+  try {
+    const myProfile = await getUserProfile(currentUser.uid);
+    const myUsername = myProfile?.username || currentUser.displayName || 'trader';
+    await addDoc(collection(db, 'comments'), {
+      tradeId: String(tradeId),
+      text,
+      uid: currentUser.uid,
+      username: myUsername,
+      photoURL: myProfile?.photoURL || currentUser.photoURL || '',
+      createdAt: Date.now()
+    });
+    loadCommentsInto(tradeId, 'pub-trade-comments-list');
+    // Notify trade owner - stored in trade data
+    if (window._currentPublicTradeUid && window._currentPublicTradeUid !== currentUser.uid) {
+      sendNotification(window._currentPublicTradeUid, `@${myUsername} comentó en tu trade`, { type: 'comment', tradeId: String(tradeId), tradeDocId: window._currentPublicTradeDocId || '' });
+    }
+  } catch(e) { console.error(e); }
+}
+
+function togglePublicTrade(tradeId) {
+  const el = document.getElementById('pub-trade-detail-' + tradeId);
+  if (!el) return;
+  const isOpen = el.style.display !== 'none';
+  el.style.display = isOpen ? 'none' : 'block';
+  if (!isOpen) {
+    loadCommentsInto(tradeId, 'pub-comments-list-' + tradeId);
+  }
+}
+
+
+// ===== SETTINGS =====
+function copyAndShare(url) {
+  if (navigator.share) {
+    navigator.share({ title: 'Mi Trade Journal', url });
+  } else {
+    navigator.clipboard.writeText(url).then(() => {
+      alert('Link copiado ✓ ' + url);
+    });
+  }
+}
+
+function openSettings() {
+  const modal = document.getElementById('settings-modal');
+  modal.classList.add('open');
+
+  // Sync toggle state
+  getUserProfile(currentUser?.uid).then(profile => {
+    const toggle = document.getElementById('settings-public-toggle');
+    if (toggle) toggle.checked = profile?.isPublic ?? false;
+
+  });
+}
+
+function closeSettings() {
+  document.getElementById('settings-modal').classList.remove('open');
+}
+
+function copySettingsLink() {
+  const url = document.getElementById('settings-link-url')?.textContent;
+  if (url) navigator.clipboard.writeText(url).then(() => alert('Link copiado ✓'));
+}
+
+
+// ===== GLOBAL FEED =====
+let feedLastDoc = null;
+let feedLoading = false;
+
+async function renderFeed(refresh = true) {
+  if (feedLoading) return;
+  feedLoading = true;
+
+  const el = document.getElementById('feed-content');
+  if (refresh) {
+    el.innerHTML = `<div class="feed-loading">${t('loading')}</div>`;
+    feedLastDoc = null;
+  }
+
+  try {
+    // Get recent public trades from all users
+    const q = query(
+      collection(db, COLLECTION),
+      where('uid', '!=', null),
+      orderBy('uid'),
+      orderBy('createdAt', 'desc')
+    );
+    const snap = await getDocs(q);
+    const allTrades = snap.docs.map(d => ({ ...d.data(), _docId: d.id }));
+
+    // Filter only trades from public profiles
+    const publicSnap = await getDocs(
+      query(collection(db, 'users'), where('isPublic', '==', true))
+    );
+    const publicUids = new Set(publicSnap.docs.map(d => d.id));
+    const publicUsers = {};
+    publicSnap.docs.forEach(d => { publicUsers[d.id] = d.data(); });
+
+    const feedTrades = allTrades
+      .filter(tr => publicUids.has(tr.uid))
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .slice(0, 30);
+
+    if (!feedTrades.length) {
+      el.innerHTML = `<div class="feed-empty"><div class="big">SIN ACTIVIDAD</div><p>No hay trades públicos todavía.</p></div>`;
+      feedLoading = false;
+      return;
+    }
+
+    el.innerHTML = feedTrades.map(tr => {
+      const user = publicUsers[tr.uid] || {};
+      const username = user.username || 'trader';
+      const displayName = user.displayName || username;
+      const photoURL = user.photoURL || '';
+      const isWin = tr.result === 'win';
+      const ago = timeAgo(tr.createdAt);
+
+      return `
+      <div class="feed-card" onclick="openFeedTrade('${tr._docId}', '${username}')">
+        <div class="feed-card-header">
+          <div class="feed-avatar" onclick="event.stopPropagation();goToTrader('${username}')">
+            ${photoURL ? `<img src="${photoURL}" alt="">` : displayName.slice(0,2).toUpperCase()}
+          </div>
+          <div class="feed-user">
+            <div class="feed-username">@${username}</div>
+            <div class="feed-time">${ago}</div>
+          </div>
+          <div class="feed-result ${tr.result}">${tr.pnl >= 0 ? '+$' : '-$'}${Math.abs(tr.pnl).toLocaleString()}</div>
+        </div>
+
+        <div class="feed-card-body">
+          ${tr.screenshot
+            ? `<img class="feed-screenshot" src="${tr.screenshot}" alt="">`
+            : `<div class="feed-screenshot-placeholder">${tr.instrument}</div>`}
+          <div class="feed-trade-info">
+            <div class="feed-instrument">${tr.instrument} <span style="font-size:14px;color:var(--text3)">${tr.direction}</span></div>
+            <div class="feed-stats">
+              <div class="feed-stat">RR <span>${tr.rr}</span></div>
+              <div class="feed-stat">Pts <span style="color:${isWin ? 'var(--green)' : 'var(--red)'}">${tr.pts >= 0 ? '+' : ''}${tr.pts}</span></div>
+              <div class="feed-stat">${formatDate(tr.date)}</div>
+            </div>
+            <div class="feed-confs">
+              ${(tr.confirmations||[]).slice(0,3).map(c => `<span class="conf-tag">${c}</span>`).join('')}
+            </div>
+          </div>
+        </div>
+
+        <div class="feed-actions">
+          <button class="feed-action" onclick="event.stopPropagation();likeFeedTrade('${tr._docId}', this)">
+            ♡ <span class="like-count">0</span>
+          </button>
+          <button class="feed-action" onclick="event.stopPropagation();openFeedTrade('${tr._docId}', '${username}')">
+            💬 Ver trade
+          </button>
+          <button class="feed-action" onclick="event.stopPropagation();goToTrader('${username}')">
+            👤 @${username}
+          </button>
+        </div>
+      </div>`;
+    }).join('');
+
+    // Load like counts
+    feedTrades.forEach(tr => loadFeedLikes(tr._docId));
+
+  } catch(e) {
+    console.error(e);
+    el.innerHTML = `<div class="feed-empty"><div class="big">ERROR</div><p>No se pudo cargar el feed.</p></div>`;
+  }
+  feedLoading = false;
+}
+
+async function loadFeedLikes(docId) {
+  try {
+    const snap = await getDocs(query(collection(db, 'likes'), where('tradeDocId', '==', docId)));
+    const card = document.querySelector(`[onclick*="${docId}"] .like-count`);
+    if (card) card.textContent = snap.size;
+  } catch(e) {}
+}
+
+async function likeFeedTrade(docId, btn) {
+  if (!currentUser) return;
+  const likeId = currentUser.uid + '_' + docId;
+  const likeRef = doc(db, 'likes', likeId);
+  try {
+    const snap = await getDoc(likeRef);
+    if (snap.exists()) {
+      await deleteDoc(likeRef);
+      btn.classList.remove('liked');
+      btn.querySelector('.like-count').textContent = Math.max(0, parseInt(btn.querySelector('.like-count').textContent) - 1);
+    } else {
+      await setDoc(likeRef, { uid: currentUser.uid, tradeDocId: docId, createdAt: Date.now() });
+      btn.classList.add('liked');
+      btn.querySelector('.like-count').textContent = parseInt(btn.querySelector('.like-count').textContent) + 1;
+    }
+  } catch(e) { console.error(e); }
+}
+
+async function openFeedTrade(docId, username) {
+  try {
+    const snap = await getDoc(doc(db, COLLECTION, docId));
+    if (!snap.exists()) return;
+    const trade = { ...snap.data(), id: snap.data().id, _docId: snap.id };
+    showPublicTrade(trade, username);
+  } catch(e) { console.error(e); }
+}
+
+// ===== HAMBURGER MENU =====
+// ===== TRADER SEARCH WITH AUTOCOMPLETE =====
+let searchDebounce = null;
+
+async function searchTraderLive(val, dropdownId) {
+  const dropdown = document.getElementById(dropdownId);
+  if (!dropdown) return;
+  const q = val.trim().replace(/^@/, '').toLowerCase();
+
+  if (!q || q.length < 1) {
+    hideSuggestions(dropdownId);
+    return;
+  }
+
+  dropdown.innerHTML = `<div class="suggestion-loading">${t('searching')}</div>`;
+  dropdown.classList.add('show');
+
+  clearTimeout(searchDebounce);
+  searchDebounce = setTimeout(async () => {
+    try {
+      // Query users where username starts with the typed value
+      const qRef = query(
+        collection(db, 'users'),
+        where('isPublic', '==', true),
+        orderBy('username'),
+        where('username', '>=', q),
+        where('username', '<=', q + '\uf8ff')
+      );
+      const snap = await getDocs(qRef);
+
+      if (snap.empty) {
+        dropdown.innerHTML = `<div class="suggestion-empty">${t('noResults')}</div>`;
+        return;
+      }
+
+      dropdown.innerHTML = snap.docs.slice(0, 6).map(d => {
+        const p = d.data();
+        const initials = (p.username || '??').slice(0, 2).toUpperCase();
+        const avatarHtml = p.photoURL
+          ? `<div class="suggestion-avatar"><img src="${p.photoURL}" alt=""></div>`
+          : `<div class="suggestion-avatar">${initials}</div>`;
+        return `<div class="suggestion-item" onmousedown="goToTrader('${p.username}')">
+          ${avatarHtml}
+          <div class="suggestion-info">
+            <div class="suggestion-name">${p.displayName || p.username}</div>
+            <div class="suggestion-handle">@${p.username}</div>
+          </div>
+        </div>`;
+      }).join('');
+
+    } catch(e) {
+      dropdown.innerHTML = `<div class="suggestion-empty">${t('searchError')}</div>`;
+    }
+  }, 280);
+}
+
+function hideSuggestions(dropdownId) {
+  const dropdown = document.getElementById(dropdownId);
+  if (dropdown) dropdown.classList.remove('show');
+}
+
+function goToTrader(username) {
+  closeHamburger();
+  window.location.href = `${window.location.pathname}?u=${encodeURIComponent(username)}`;
+}
+
+function handleTraderSearch(e, dropdownId) {
+  if (e.key !== 'Enter') return;
+  const val = e.target.value.trim().replace(/^@/, '');
+  if (!val) return;
+  goToTrader(val.toLowerCase());
+}
+
+function toggleHamburger() {
+  const menu = document.getElementById('hamburger-menu');
+  const isOpen = menu.classList.contains('open');
+  if (isOpen) {
+    closeHamburger();
+  } else {
+    menu.classList.add('open');
+    document.getElementById('hamburger-btn').classList.add('open');
+    // sync lang label
+    const langLabel = document.getElementById('hm-lang-label');
+    if (langLabel) langLabel.textContent = currentLang === 'es' ? 'Cambiar a EN' : 'Switch to ES';
+  }
+}
+
+function closeHamburger() {
+  document.getElementById('hamburger-menu').classList.remove('open');
+  document.getElementById('hamburger-btn').classList.remove('open');
+}
+
+// Close menu when clicking outside
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('hamburger-menu');
+  const btn = document.getElementById('hamburger-btn');
+  const avatarWrap = document.getElementById('mobile-avatar-wrap');
+  if (menu && menu.classList.contains('open')
+      && !menu.contains(e.target)
+      && !btn.contains(e.target)
+      && !(avatarWrap && avatarWrap.contains(e.target))) {
+    closeHamburger();
+  }
+});
+
+// Sync user info to hamburger menu
+function syncHamburgerUser(user) {
+  const hmRow = document.getElementById('hm-user-row');
+  const hmAvatar = document.getElementById('hm-avatar');
+  const hmName = document.getElementById('hm-name');
+  const hmLogout = document.getElementById('hm-logout-btn');
+  if (user) {
+    if (hmRow) hmRow.style.display = 'flex';
+    if (hmAvatar && user.photoURL) {
+      hmAvatar.src = user.photoURL;
+      hmAvatar.style.display = 'block';
+    }
+    if (hmName) hmName.textContent = user.displayName || user.email || '—';
+    if (hmLogout) hmLogout.style.display = 'flex';
+    const hmProfile = document.getElementById('hm-profile-btn');
+    if (hmProfile) hmProfile.style.display = 'flex';
+    const hmSettingsBtn = document.getElementById('hm-settings-btn');
+    if (hmSettingsBtn) hmSettingsBtn.style.display = 'flex';
+    const settingsDesktopBtn = document.getElementById('settings-desktop-btn');
+    if (settingsDesktopBtn) settingsDesktopBtn.style.display = 'flex';
+  } else {
+    if (hmRow) hmRow.style.display = 'none';
+    if (hmLogout) hmLogout.style.display = 'none';
+  }
+}
+
 // Bind auth buttons via event listeners (fixes module scope issue)
 document.getElementById('google-login-btn').addEventListener('click', loginWithGoogle);
 document.getElementById('logout-btn').addEventListener('click', logoutUser);
 
+document.addEventListener('click', (e) => {
+  if (notifOpen && !e.target.closest('#notif-panel') && !e.target.closest('#notif-btn')) {
+    document.getElementById('notif-panel').classList.remove('show');
+    notifOpen = false;
+  }
+});
+
+document.getElementById('edit-profile-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeEditProfile();
+});
+document.getElementById('story-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeStoryModal();
+});
+document.getElementById('settings-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeSettings();
+});
+
+// Expose hamburger functions (not in original window exports)
+// ===== EDIT PROFILE =====
+let epPhotoData = null;
+
+async function openEditProfile() {
+  if (!currentUser) return;
+  try {
+    const snap = await getDoc(doc(db, 'users', currentUser.uid));
+    const profile = snap.exists() ? snap.data() : null;
+    const username = profile?.username || currentUser.displayName?.toLowerCase().replace(/\s+/g, '') || '';
+
+    document.getElementById('ep-name').value = profile?.displayName || currentUser.displayName || '';
+    document.getElementById('ep-username').value = username;
+    document.getElementById('ep-bio').value = profile?.bio || '';
+
+    const preview = document.getElementById('ep-pic-preview');
+    const photo = profile?.photoURL || currentUser.photoURL;
+    if (photo) {
+      preview.innerHTML = `<img src="${photo}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    } else {
+      preview.innerHTML = `<span style="font-family:var(--display);font-size:28px;color:var(--green)">${(username.slice(0,2).toUpperCase() || '?')}</span>`;
+    }
+
+    epPhotoData = null;
+    document.getElementById('edit-profile-modal').classList.add('open');
+
+    // Bind photo input — always re-bind
+    const picInput = document.getElementById('ep-pic-input');
+    picInput.value = '';
+    picInput.onchange = function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      // Compress image to max 200x200 before saving
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX = 200;
+        const scale = Math.min(MAX / img.width, MAX / img.height, 1);
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        epPhotoData = canvas.toDataURL('image/jpeg', 0.7);
+        document.getElementById('ep-pic-preview').innerHTML = `<img src="${epPhotoData}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+        URL.revokeObjectURL(url);
+      };
+      img.src = url;
+    };
+
+    preview.onclick = () => picInput.click();
+  } catch(e) { console.error(e); }
+}
+
+function closeEditProfile() {
+  document.getElementById('edit-profile-modal').classList.remove('open');
+}
+
+async function saveEditProfile() {
+  const btn = document.getElementById('ep-save-btn');
+  btn.textContent = 'Guardando...';
+  btn.disabled = true;
+
+  const name = document.getElementById('ep-name').value.trim();
+  const username = document.getElementById('ep-username').value.trim().toLowerCase().replace(/\s+/g, '');
+  const bio = document.getElementById('ep-bio').value.trim();
+
+  let photoURL = epPhotoData || currentUser.photoURL || '';
+
+  try {
+    const existing = await getDoc(doc(db, 'users', currentUser.uid));
+    const isPublic = existing.exists() ? existing.data().isPublic ?? false : false;
+
+    await setDoc(doc(db, 'users', currentUser.uid), {
+      uid: currentUser.uid,
+      username: username || currentUser.uid.slice(0,8),
+      displayName: name || currentUser.displayName || 'Trader',
+      photoURL,
+      bio,
+      isPublic,
+      updatedAt: Date.now()
+    });
+
+    // Update header
+    if (photoURL) document.getElementById('user-avatar').src = photoURL;
+    if (name) document.getElementById('user-name').textContent = name;
+
+    closeEditProfile();
+    renderMyProfile();
+  } catch(e) {
+    console.error(e);
+  }
+
+  btn.textContent = 'GUARDAR CAMBIOS';
+  btn.disabled = false;
+}
+
+// Show edit profile btn when logged in (in syncHamburgerUser)
+window.toggleHamburger = toggleHamburger;
+window.closeHamburger = closeHamburger;
+window.toggleLang = toggleLang;
+window.logoutUser = logoutUser;
+window.handleTraderSearch = handleTraderSearch;
+window.searchTraderLive = searchTraderLive;
+window.hideSuggestions = hideSuggestions;
+window.goToTrader = goToTrader;
+window.renderFeed = renderFeed;
+window.likeFeedTrade = likeFeedTrade;
+window.openFeedTrade = openFeedTrade;
+window.__mod_renderFeed = renderFeed;
+window.__mod_toggleNotifPanel = toggleNotifPanel;
+window.markNotificationsRead = markNotificationsRead;
+window.__mod_markNotificationsRead = markNotificationsRead;
+window.handleNotifClick = handleNotifClick;
+window.__mod_handleNotifClick = handleNotifClick;
+window.loadNotifications = loadNotifications;
+window.__mod_loadNotifications = loadNotifications;
+window.clearNotifications = clearNotifications;
+window.__mod_clearNotifications = clearNotifications;
+// Underscore aliases for global script
+window._toggleNotifPanel = toggleNotifPanel;
+window._clearNotifications = clearNotifications;
+window._openSettings = openSettings;
+window._closeSettings = closeSettings;
+window._showPage = showPage;
+window._goBackToPublicProfile = goBackToPublicProfile;
+window.clearNotifications = clearNotifications;
+window.toggleFollow = toggleFollow;
+window.postComment = postComment;
+window.togglePublicTrade = togglePublicTrade;
+window.showPublicTrade = showPublicTrade;
+window.__mod_showPublicTrade = showPublicTrade;
+window.postPublicComment = postPublicComment;
+window.goBackToPublicProfile = goBackToPublicProfile;
+window.__mod_goBackToPublicProfile = goBackToPublicProfile;
+window.addEventListener('load', () => {
+  // Patch global helpers with module functions
+  window.goBackDetail = () => showPage(detailOrigin);
+  window.goBackPublic = () => goBackToPublicProfile();
+});
+window.loadCommentsInto = loadCommentsInto;
+window.openStoryModal = openStoryModal;
+window.closeStoryModal = closeStoryModal;
+window.downloadStory = downloadStory;
+window.exportCSV = exportCSV;
+window.openSettings = openSettings;
+window.__mod_openSettings = openSettings;
+window.copyAndShare = copyAndShare;
+window.closeSettings = closeSettings;
+window.__mod_closeSettings = closeSettings;
+window.copySettingsLink = copySettingsLink;
+window.toggleMonthly = toggleMonthly;
+window.copyMonthlyCap = copyMonthlyCap;
+window.openEditProfile = openEditProfile;
+window.closeEditProfile = closeEditProfile;
+window.saveEditProfile = saveEditProfile;
+
+// Poll notifications every 30s
+setInterval(() => {
+  if (window.__mod_loadNotifications && currentUser) window.__mod_loadNotifications();
+}, 5000);
+
 // Init
-renderDashboard();
+document.getElementById('lang-btn').textContent = currentLang === 'es' ? 'EN' : 'ES';
+applyTranslations();
+
+// Check if public profile URL
+checkPublicProfile().then(isPublic => {
+  if (!isPublic) renderDashboard();
+});
 </script>
 </body>
 </html>
